@@ -1,0 +1,1514 @@
+import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  RadialLinearScale,
+  Tooltip,
+} from 'chart.js'
+import {
+  Bar,
+  PolarArea,
+} from 'react-chartjs-2'
+
+import { demoSession } from '../../demo/services/store'
+import { subscribeToDemoSession } from '../../demo/services/session'
+import {
+  addDocument,
+  deleteDocument,
+  getCollection,
+  updateDocument,
+} from '../../demo/services/store'
+import AdminEmptyState from '../../components/admin/AdminEmptyState'
+import AdminFilterBar from '../../components/admin/AdminFilterBar'
+import AdminPageHeader from '../../components/admin/AdminPageHeader'
+import AdminPanel from '../../components/admin/AdminPanel'
+import AdminStatusBadge from '../../components/admin/AdminStatusBadge'
+import AdminSummaryCard from '../../components/admin/AdminSummaryCard'
+
+import styles from './NoticeManage.module.scss'
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  RadialLinearScale,
+  ArcElement,
+  Tooltip,
+  Legend
+)
+
+const statusLabels = {
+  published: '게시 중',
+  draft: '숨김',
+}
+
+const categories = ['전체 분류', '배송', '이벤트', '정책', '시스템', '기타']
+
+const toDate = (value) => value?.toDate?.() || (value ? new Date(value) : null)
+
+const formatDateTime = (value) => {
+  const date = toDate(value)
+  if (!date || Number.isNaN(date.getTime())) return '-'
+
+  return new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(date)
+}
+
+const formatDate = (value) => {
+  const date = toDate(value)
+  if (!date || Number.isNaN(date.getTime())) return '-'
+
+  return new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date)
+}
+
+const formatNoticeId = (noticeId = '') => {
+  if (noticeId.length <= 8) return noticeId
+  return `${noticeId.slice(0, 3)}…${noticeId.slice(-4)}`
+}
+
+const normalizeNotice = (notice) => ({
+  ...notice,
+  status: notice.status === 'published' ? 'published' : 'draft',
+  isPinned: Boolean(notice.isPinned),
+  authorName: notice.authorName || '관리자',
+  target: notice.target || '전체 회원',
+  views: Number(notice.views || 0),
+})
+
+const SummaryIcon = ({ type }) => {
+  const icons = {
+    total: (
+      <>
+        <rect
+          x="5"
+          y="3.5"
+          width="14"
+          height="17"
+          rx="2"
+        />
+        <path d="M8 8h8M8 12h8M8 16h5" />
+      </>
+    ),
+
+    published: (
+      <>
+        <path d="M4 12.5 9 17l11-11" />
+      </>
+    ),
+
+    draft: (
+      <>
+        <path d="M4 7h16M4 12h10M4 17h7" />
+      </>
+    ),
+
+    important: (
+      <>
+        <path d="M12 3 14.6 8.3 20.5 9.2 16.2 13.4 17.2 19.3 12 16.5 6.8 19.3 7.8 13.4 3.5 9.2 9.4 8.3 12 3Z" />
+      </>
+    ),
+  }
+
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {icons[type]}
+    </svg>
+  )
+}
+
+
+const NoticeManage = () => {
+  const [notices, setNotices] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [loadError, setLoadError] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('전체 분류')
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [activeCardKey, setActiveCardKey] = useState('total')
+  const [selectedIds, setSelectedIds] = useState([])
+  const [selectedNoticeId, setSelectedNoticeId] = useState(null)
+  const [isCreating, setIsCreating] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
+  const [isRefreshing, setIsRefreshing] = useState(false)
+
+  // 외부 클릭 감지 Refs
+  const tableRef = useRef(null)
+  const panelRef = useRef(null)
+
+  // 선택 공지 데이터
+  const selectedNotice = notices.find((n) => n.id === selectedNoticeId) || null
+  const [draftTitle, setDraftTitle] = useState('')
+  const [draftCategory, setDraftCategory] = useState('배송')
+  const [draftStatus, setDraftStatus] = useState('published')
+  const [draftIsPinned, setDraftIsPinned] = useState(false)
+  const [draftContent, setDraftContent] = useState('')
+
+  const loadNotices = async () => {
+    setIsLoading(true)
+    setLoadError('')
+
+    try {
+      const noticeDocs = await getCollection('notices')
+      setNotices(
+        noticeDocs
+          .map(normalizeNotice)
+          .sort((a, b) => (toDate(b.createdAt)?.getTime() || 0) - (toDate(a.createdAt)?.getTime() || 0)),
+      )
+      setSelectedIds([])
+    } catch (error) {
+      console.error('공지사항 조회 실패:', error)
+      setLoadError('공지사항을 불러오지 못했습니다. 데모 데이터를 초기화한 후 다시 시도해주세요.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    const unsubscribe = subscribeToDemoSession((user) => {
+      if (user) {
+        loadNotices()
+      } else {
+        setNotices([])
+        setLoadError('관리자 로그인 후 공지사항을 관리할 수 있습니다.')
+        setIsLoading(false)
+      }
+    })
+
+    return unsubscribe
+  }, [])
+
+  // 외부 빈 공간 클릭 시 통계 패널로 복귀
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (!selectedNoticeId && !isCreating) return
+      if (
+        (panelRef.current && panelRef.current.contains(e.target)) ||
+        (tableRef.current && tableRef.current.contains(e.target))
+      ) {
+        return
+      }
+      setSelectedNoticeId(null)
+      setIsCreating(false)
+    }
+
+    document.addEventListener('mousedown', handleOutsideClick)
+    return () => document.removeEventListener('mousedown', handleOutsideClick)
+  }, [isCreating, selectedNoticeId])
+
+  // 새로고침 핸들러
+  const handleRefresh = async () => {
+    setIsRefreshing(true)
+    await loadNotices()
+    setSelectedNoticeId(null)
+    setIsCreating(false)
+    setIsRefreshing(false)
+    setToastMessage('공지사항 목록을 새로고침했습니다.')
+    setTimeout(() => {
+      setToastMessage('')
+    }, 2500)
+  }
+
+  // 지표 계산
+  const totalCount = notices.length
+  const publishedCount = notices.filter((n) => n.status === 'published').length
+  const draftCount = notices.filter((n) => n.status === 'draft').length
+  const importantCount = notices.filter((n) => n.isPinned).length
+  // 중요 고정 공지는 상태와 중복 집계하지 않아 도넛의 합계가 전체 건수와 일치하도록 한다.
+  const donutPublishedCount = notices.filter((n) => n.status === 'published' && !n.isPinned).length
+  const donutDraftCount = notices.filter((n) => n.status === 'draft' && !n.isPinned).length
+
+  const summaryCards = [
+    { key: 'total', label: '전체 공지', value: totalCount, unit: '건', caption: '등록된 전체 공지' },
+    { key: 'published', label: '게시 중', value: publishedCount, unit: '건', caption: '현재 노출 중인 공지' },
+    { key: 'draft', label: '숨김', value: draftCount, unit: '건', caption: '현재 비공개 공지' },
+    { key: 'important', label: '중요 공지', value: importantCount, unit: '건', caption: '상단 고정 공지' },
+  ]
+
+
+  // ========================================
+  // 공지 상태 분포 - Stacked Horizontal Bar
+  // ========================================
+
+  const statusChartData = useMemo(
+    () => ({
+      labels: [
+        '전체 공지',
+      ],
+
+      datasets: [
+        {
+          label: '게시 중',
+          data: [
+            donutPublishedCount,
+          ],
+          backgroundColor:
+            '#568a80',
+          borderColor:
+            '#ffffff',
+          borderWidth: 1,
+          borderRadius: 5,
+          barThickness: 24,
+          stack: 'status',
+        },
+        {
+          label: '숨김',
+          data: [
+            donutDraftCount,
+          ],
+          backgroundColor:
+            '#739eae',
+          borderColor:
+            '#ffffff',
+          borderWidth: 1,
+          borderRadius: 5,
+          barThickness: 24,
+          stack: 'status',
+        },
+        {
+          label: '중요 고정',
+          data: [
+            importantCount,
+          ],
+          backgroundColor:
+            '#dca451',
+          borderColor:
+            '#ffffff',
+          borderWidth: 1,
+          borderRadius: 5,
+          barThickness: 24,
+          stack: 'status',
+        },
+      ],
+    }),
+    [
+      donutPublishedCount,
+      donutDraftCount,
+      importantCount,
+    ]
+  )
+
+
+  const statusChartOptions = useMemo(
+    () => ({
+      responsive: true,
+      maintainAspectRatio: false,
+
+      indexAxis: 'y',
+
+      animation: {
+        duration: 900,
+        easing: 'easeOutQuart',
+      },
+
+      plugins: {
+        legend: {
+          display: false,
+        },
+
+        tooltip: {
+          enabled: true,
+          position: 'nearest',
+
+          xAlign: 'center',
+          yAlign: 'bottom',
+
+          caretPadding: 8,
+          padding: 10,
+
+          displayColors: true,
+          usePointStyle: true,
+          boxWidth: 7,
+          boxHeight: 7,
+
+          filter: (context) =>
+            Number(context.raw) > 0,
+
+          callbacks: {
+            title: () => '',
+
+            label: (context) => {
+              const count =
+                Number(context.raw) || 0
+
+              const rate =
+                totalCount > 0
+                  ? Math.round(
+                      (count / totalCount)
+                      * 100
+                    )
+                  : 0
+
+              return `${context.dataset.label} ${count}건 · ${rate}%`
+            },
+          },
+        },
+      },
+
+      scales: {
+        x: {
+          stacked: true,
+          display: false,
+
+          beginAtZero: true,
+          max:
+            Math.max(
+              totalCount,
+              1
+            ),
+        },
+
+        y: {
+          stacked: true,
+          display: false,
+        },
+      },
+    }),
+    [totalCount]
+  )
+
+
+  // ========================================
+  // 분류별 공지 현황 - Polar Area
+  // 기존 화면의 집계값 그대로 사용
+  // ========================================
+
+  const categoryChartData = useMemo(
+    () => {
+      const categoryCountMap =
+        notices.reduce(
+          (acc, notice) => {
+            const category =
+              notice.category || '기타'
+
+            acc[category] =
+              (acc[category] || 0) + 1
+
+            return acc
+          },
+          {}
+        )
+
+      const categoryEntries =
+        Object.entries(
+          categoryCountMap
+        )
+
+      const chartColors = [
+        'rgba(86, 138, 128, 0.82)',
+        'rgba(115, 158, 174, 0.82)',
+        'rgba(220, 164, 81, 0.82)',
+        'rgba(214, 154, 149, 0.82)',
+        'rgba(150, 172, 145, 0.82)',
+        'rgba(178, 151, 125, 0.82)',
+        'rgba(128, 143, 160, 0.82)',
+        'rgba(190, 170, 145, 0.82)',
+      ]
+
+      return {
+        labels:
+          categoryEntries.map(
+            ([category]) =>
+              category
+          ),
+
+        datasets: [
+          {
+            data:
+              categoryEntries.map(
+                ([, count]) =>
+                  count
+              ),
+
+            backgroundColor:
+              categoryEntries.map(
+                (_, index) =>
+                  chartColors[
+                    index %
+                    chartColors.length
+                  ]
+              ),
+
+            borderColor:
+              '#ffffff',
+
+            borderWidth: 2,
+          },
+        ],
+      }
+    },
+    [notices]
+  )
+
+
+  const categoryChartOptions = useMemo(
+    () => ({
+      responsive: true,
+      maintainAspectRatio: false,
+
+      animation: {
+        duration: 900,
+        easing: 'easeOutQuart',
+        animateRotate: true,
+        animateScale: true,
+      },
+
+      plugins: {
+        legend: {
+          display: true,
+          position: 'bottom',
+
+          labels: {
+            usePointStyle: true,
+            pointStyle: 'circle',
+
+            boxWidth: 7,
+            boxHeight: 7,
+
+            padding: 12,
+
+            color: '#747b78',
+
+            font: {
+              size: 12,
+              weight: '600',
+            },
+          },
+        },
+
+        tooltip: {
+          displayColors: true,
+          usePointStyle: true,
+          padding: 10,
+
+          callbacks: {
+            label: (context) =>
+              `${context.label}: ${context.raw}건`,
+          },
+        },
+      },
+
+      scales: {
+        r: {
+          beginAtZero: true,
+
+          ticks: {
+            display: false,
+            stepSize: 1,
+          },
+
+          grid: {
+            color:
+              'rgba(140, 148, 144, 0.18)',
+          },
+
+          angleLines: {
+            color:
+              'rgba(140, 148, 144, 0.16)',
+          },
+
+          pointLabels: {
+            display: false,
+          },
+        },
+      },
+    }),
+    []
+  )
+
+  // 카드 클릭 필터 연동
+  const handleCardClick = (key) => {
+    setActiveCardKey(key)
+    setSearchQuery('')
+    setCategoryFilter('전체 분류')
+
+    if (key === 'total') setStatusFilter('all')
+    else if (key === 'published') setStatusFilter('published')
+    else if (key === 'draft') setStatusFilter('draft')
+    else if (key === 'important') setStatusFilter('important')
+  }
+
+  // 필터링 적용된 목록
+  const filteredNotices = useMemo(() => {
+    return notices.filter((n) => {
+      const matchesQuery =
+        !searchQuery.trim() ||
+        n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        n.id.toLowerCase().includes(searchQuery.toLowerCase())
+
+      const matchesCategory = categoryFilter === '전체 분류' || n.category === categoryFilter
+
+      let matchesStatus = true
+      if (statusFilter === 'published') matchesStatus = n.status === 'published'
+      else if (statusFilter === 'draft') matchesStatus = n.status === 'draft'
+      else if (statusFilter === 'important') matchesStatus = n.isPinned
+
+      return matchesQuery && matchesCategory && matchesStatus
+    })
+  }, [notices, searchQuery, categoryFilter, statusFilter])
+
+  const handleSelectAll = (e) => {
+    setSelectedIds(e.target.checked ? filteredNotices.map((n) => n.id) : [])
+  }
+
+  const handleSelectRow = (id, e) => {
+    e.stopPropagation()
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
+  }
+
+  const scrollPanelIntoViewOnMobile = () => {
+    if (
+      typeof window !== 'undefined'
+      && window.matchMedia('(max-width: 767px)').matches
+    ) {
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          panelRef.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          })
+        })
+      })
+    }
+  }
+
+  const openEditPanel = (notice) => {
+    setIsCreating(false)
+    setSelectedNoticeId(notice.id)
+    setDraftTitle(notice.title)
+    setDraftCategory(notice.category)
+    setDraftStatus(notice.status)
+    setDraftIsPinned(notice.isPinned)
+    setDraftContent(notice.content)
+    scrollPanelIntoViewOnMobile()
+  }
+
+  const openCreatePanel = () => {
+    setSelectedNoticeId(null)
+    setIsCreating(true)
+    setDraftTitle('')
+    setDraftCategory('배송')
+    setDraftStatus('draft')
+    setDraftIsPinned(false)
+    setDraftContent('')
+    scrollPanelIntoViewOnMobile()
+  }
+
+  const handleSaveEdit = async () => {
+    if (!selectedNotice && !isCreating) return
+
+    const title = draftTitle.trim()
+    const content = draftContent.trim()
+    if (!title || !content) {
+      setToastMessage('제목과 본문을 입력해주세요.')
+      return
+    }
+
+    const noticeData = {
+      title,
+      content,
+      category: draftCategory,
+      status: draftStatus,
+      isPinned: draftIsPinned,
+      authorId: selectedNotice?.authorId || demoSession.currentUser?.uid || '',
+      authorName: selectedNotice?.authorName || demoSession.currentUser?.displayName || '관리자',
+      target: '전체 회원',
+      views: selectedNotice?.views || 0,
+    }
+
+    setIsSaving(true)
+    try {
+      if (isCreating) {
+        await addDocument('notices', noticeData)
+      } else {
+        await updateDocument('notices', selectedNotice.id, noticeData)
+      }
+
+      await loadNotices()
+      setSelectedNoticeId(null)
+      setIsCreating(false)
+      setToastMessage(isCreating ? '공지사항이 등록되었습니다.' : '공지사항이 수정되었습니다.')
+      setTimeout(() => setToastMessage(''), 3000)
+    } catch (error) {
+      console.error('공지사항 저장 실패:', error)
+      setToastMessage('공지사항을 저장하지 못했습니다. 데모 데이터를 초기화한 후 다시 시도해주세요.')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleDeleteNotice = async () => {
+    if (!selectedNotice) return
+    if (window.confirm(`'${selectedNotice.title}' 공지를 정말 삭제하시겠습니까?`)) {
+      setIsSaving(true)
+      try {
+        await deleteDocument('notices', selectedNotice.id)
+        setNotices((prev) => prev.filter((n) => n.id !== selectedNotice.id))
+        setSelectedNoticeId(null)
+        setToastMessage('공지사항이 삭제되었습니다.')
+        setTimeout(() => setToastMessage(''), 3000)
+      } catch (error) {
+        console.error('공지사항 삭제 실패:', error)
+        setToastMessage('공지사항을 삭제하지 못했습니다. 데모 데이터를 초기화한 후 다시 시도해주세요.')
+      } finally {
+        setIsSaving(false)
+      }
+    }
+  }
+
+  const handleBulkHide = async () => {
+    if (selectedIds.length === 0 || isSaving) return
+
+    setIsSaving(true)
+    try {
+      await Promise.all(
+        selectedIds.map((noticeId) => updateDocument('notices', noticeId, { status: 'draft' })),
+      )
+      setNotices((current) => current.map((notice) => (
+        selectedIds.includes(notice.id) ? { ...notice, status: 'draft' } : notice
+      )))
+      setSelectedIds([])
+      setToastMessage('선택한 공지를 숨김 처리했습니다.')
+      setTimeout(() => setToastMessage(''), 3000)
+    } catch (error) {
+      console.error('공지사항 일괄 숨김 실패:', error)
+      setToastMessage('선택한 공지를 숨김 처리하지 못했습니다.')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const resetFilters = () => {
+    setSearchQuery('')
+    setCategoryFilter('전체 분류')
+    setStatusFilter('all')
+    setActiveCardKey('total')
+  }
+
+  return (
+    <section
+      className={styles.page}
+      aria-labelledby="notice-manage-title"
+    >
+
+      {/* ========================================
+          제목
+      ======================================== */}
+
+      <AdminPageHeader
+        title="공지사항 관리"
+        titleId="notice-manage-title"
+        onRefresh={handleRefresh}
+        isRefreshing={isRefreshing}
+      />
+
+
+      {/* ========================================
+          상단 요약 카드
+      ======================================== */}
+
+      <section
+        className={styles.summaryArea}
+        aria-label="공지 현황 요약"
+      >
+        <div className={styles.summaryGrid}>
+          {summaryCards.map((card) => (
+            <AdminSummaryCard
+              key={card.key}
+              icon={
+                <span className={styles.summarySvg}>
+                  <SummaryIcon
+                    type={card.key}
+                  />
+                </span>
+              }
+              label={card.label}
+              value={card.value.toLocaleString('ko-KR')}
+              unit={card.unit}
+              caption={card.caption}
+              tone={
+                card.key === 'published'
+                  ? 'success'
+                  : card.key === 'draft'
+                    ? 'info'
+                    : card.key === 'important'
+                      ? 'warning'
+                      : 'primary'
+              }
+              active={
+                activeCardKey === card.key
+              }
+              onClick={() =>
+                handleCardClick(card.key)
+              }
+            />
+          ))}
+        </div>
+      </section>
+
+
+      {/* ========================================
+          메인 2단
+      ======================================== */}
+
+      <div className={styles.managementGrid}>
+
+        {/* 좌측: 공지 목록 */}
+
+        <section
+          className={styles.mainSection}
+          aria-labelledby="notice-list-title"
+        >
+
+          <AdminFilterBar
+            searchValue={searchQuery}
+            onSearchChange={(value) => {
+              setSearchQuery(value)
+              setActiveCardKey(null)
+            }}
+            searchPlaceholder="제목, 내용, 공지 ID 검색"
+            searchLabel="공지 검색"
+            onReset={resetFilters}
+          >
+            <label className={styles.selectField}>
+              <span className={styles.srOnly}>
+                게시 상태
+              </span>
+
+              <select
+                value={statusFilter}
+                onChange={(event) => {
+                  setStatusFilter(
+                    event.target.value
+                  )
+                  setActiveCardKey(null)
+                }}
+              >
+                <option value="all">
+                  전체 상태
+                </option>
+
+                <option value="published">
+                  게시 중
+                </option>
+
+                <option value="draft">
+                  숨김
+                </option>
+
+                <option value="important">
+                  중요 공지만
+                </option>
+              </select>
+            </label>
+
+            <label className={styles.selectField}>
+              <span className={styles.srOnly}>
+                공지 분류
+              </span>
+
+              <select
+                value={categoryFilter}
+                onChange={(event) => {
+                  setCategoryFilter(
+                    event.target.value
+                  )
+                  setActiveCardKey(null)
+                }}
+              >
+                {categories.map((category) => (
+                  <option
+                    key={category}
+                    value={category}
+                  >
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </AdminFilterBar>
+
+
+          {/* 목록 제목 / 액션 */}
+
+          <div className={styles.sectionHeading}>
+
+            <div className={styles.titleWrap}>
+              <h2 id="notice-list-title">
+                공지 목록
+              </h2>
+            </div>
+
+            <div className={styles.headingRight}>
+
+              <span className={styles.noticeCount}>
+                총{' '}
+                <strong>
+                  {filteredNotices.length.toLocaleString(
+                    'ko-KR'
+                  )}
+                </strong>
+                건
+              </span>
+
+              <div className={styles.actions}>
+
+                {selectedIds.length > 0 && (
+                  <button
+                    type="button"
+                    className={styles.bulkButton}
+                    onClick={handleBulkHide}
+                    disabled={isSaving}
+                  >
+                    선택 {selectedIds.length}개 숨김
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  className={styles.registerButton}
+                  onClick={openCreatePanel}
+                >
+                  + 새 공지 등록
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          {/* 목록 */}
+
+          {isLoading ? (
+
+            <div className={styles.stateBox}>
+              공지사항을 불러오는 중입니다.
+            </div>
+
+          ) : loadError ? (
+
+            <AdminEmptyState
+              title="공지사항을 불러오지 못했습니다."
+              description={loadError}
+            />
+
+          ) : filteredNotices.length === 0 ? (
+
+            <AdminEmptyState
+              title="검색 결과가 없습니다."
+              description="검색어나 필터 조건을 다시 확인해주세요."
+            />
+
+          ) : (
+
+            <div
+              className={styles.tableWrap}
+              ref={tableRef}
+            >
+              <table className={styles.dataTable}>
+
+                <colgroup>
+                  <col className={styles.selectColumn} />
+                  <col className={styles.idColumn} />
+                  <col className={styles.titleColumn} />
+                  <col className={styles.categoryColumn} />
+                  <col className={styles.dateColumn} />
+                  <col className={styles.statusColumn} />
+                  <col className={styles.pinColumn} />
+                  <col className={styles.targetColumn} />
+                  <col className={styles.viewsColumn} />
+                  <col className={styles.manageColumn} />
+                </colgroup>
+
+                <thead>
+                  <tr>
+                    <th>
+                      <input
+                        type="checkbox"
+                        onChange={handleSelectAll}
+                        checked={
+                          filteredNotices.length > 0
+                          && selectedIds.length
+                            === filteredNotices.length
+                        }
+                        aria-label="현재 목록 전체 선택"
+                      />
+                    </th>
+
+                    <th>공지 ID</th>
+                    <th>제목</th>
+                    <th>분류</th>
+                    <th>작성일</th>
+                    <th>게시 상태</th>
+                    <th>중요 여부</th>
+                    <th>노출 대상</th>
+                    <th>조회수</th>
+                    <th>관리</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {filteredNotices.map((notice) => (
+                    <tr
+                      key={notice.id}
+                      className={`${styles.clickableRow} ${
+                        selectedNoticeId === notice.id
+                          ? styles.selectedRow
+                          : ''
+                      }`}
+                      onClick={() =>
+                        openEditPanel(notice)
+                      }
+                    >
+                      <td>
+                        <input
+                          type="checkbox"
+                          checked={
+                            selectedIds.includes(
+                              notice.id
+                            )
+                          }
+                          onChange={(event) =>
+                            handleSelectRow(
+                              notice.id,
+                              event
+                            )
+                          }
+                          onClick={(event) =>
+                            event.stopPropagation()
+                          }
+                          aria-label={`${notice.title} 선택`}
+                        />
+                      </td>
+
+                      <td
+                        className={
+                          styles.noticeIdCell
+                        }
+                      >
+                        <strong title={notice.id}>
+                          {formatNoticeId(
+                            notice.id
+                          )}
+                        </strong>
+                      </td>
+
+                      <td>
+                        <span
+                          className={
+                            styles.noticeTitleText
+                          }
+                          title={notice.title}
+                        >
+                          {notice.title}
+                        </span>
+                      </td>
+
+                      <td>
+                        {notice.category}
+                      </td>
+
+                      <td
+                        className={
+                          styles.noticeDateCell
+                        }
+                      >
+                        {formatDate(
+                          notice.createdAt
+                        )}
+                      </td>
+
+                      <td>
+                        <AdminStatusBadge
+                          tone={
+                            notice.status ===
+                            'published'
+                              ? 'success'
+                              : 'neutral'
+                          }
+                          size="small"
+                        >
+                          {
+                            statusLabels[
+                              notice.status
+                            ]
+                          }
+                        </AdminStatusBadge>
+                      </td>
+
+                      <td>
+                        <AdminStatusBadge
+                          tone={
+                            notice.isPinned
+                              ? 'warning'
+                              : 'neutral'
+                          }
+                          size="small"
+                        >
+                          {notice.isPinned
+                            ? '중요'
+                            : '일반'}
+                        </AdminStatusBadge>
+                      </td>
+
+                      <td>
+                        {notice.target}
+                      </td>
+
+                      <td>
+                        {notice.views.toLocaleString(
+                          'ko-KR'
+                        )}
+                      </td>
+
+                      <td>
+                        <button
+                          type="button"
+                          className={styles.editBtn}
+                          onClick={(event) => {
+                            event.stopPropagation()
+                            openEditPanel(notice)
+                          }}
+                        >
+                          수정하기
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+
+              </table>
+            </div>
+
+          )}
+
+        </section>
+
+
+        {/* ========================================
+            우측: 상세/등록 또는 통계
+        ======================================== */}
+
+        {(selectedNotice || isCreating) ? (
+
+          <aside
+            className={styles.editPanel}
+            ref={panelRef}
+            aria-labelledby="notice-detail-title"
+          >
+
+            <header className={styles.panelTopHeader}>
+
+              <div>
+                <h2 id="notice-detail-title">
+                  {isCreating
+                    ? '새 공지 등록'
+                    : '공지 상세 보기'}
+                </h2>
+
+                <p className={styles.requiredGuide}>
+                  <span>*</span>
+                  {' '}
+                  표시는 필수 입력 항목입니다.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedNoticeId(null)
+                  setIsCreating(false)
+                }}
+                aria-label="닫기"
+              >
+                ×
+              </button>
+
+            </header>
+
+
+            <div className={styles.metaFormSection}>
+
+              <div className={styles.metaHeaderTitle}>
+
+                <label className={styles.titleField}>
+                  <span>
+                    제목
+                    {' '}
+                    <em className={styles.requiredMark}>
+                      *
+                    </em>
+                  </span>
+
+                  <input
+                    type="text"
+                    value={draftTitle}
+                    onChange={(event) =>
+                      setDraftTitle(
+                        event.target.value
+                      )
+                    }
+                    placeholder="공지 제목을 입력하세요"
+                    required
+                  />
+                </label>
+
+                <label className={styles.importantCheckLabel}>
+                  <input
+                    type="checkbox"
+                    checked={draftIsPinned}
+                    onChange={(event) =>
+                      setDraftIsPinned(
+                        event.target.checked
+                      )
+                    }
+                  />
+
+                  <span>
+                    중요 고정
+                  </span>
+                </label>
+
+              </div>
+
+
+              <dl className={styles.metaDl}>
+
+                <div>
+                  <dt>
+                    공지 ID
+                  </dt>
+
+                  <dd>
+                    {selectedNotice?.id
+                      || '등록 후 자동 생성'}
+                  </dd>
+                </div>
+
+                <div>
+                  <dt>
+                    분류
+                    {' '}
+                    <em className={styles.requiredMark}>
+                      *
+                    </em>
+                  </dt>
+
+                  <dd>
+                    <select
+                      value={draftCategory}
+                      onChange={(event) =>
+                        setDraftCategory(
+                          event.target.value
+                        )
+                      }
+                      required
+                    >
+                      {categories
+                        .filter(
+                          (category) =>
+                            category
+                            !== '전체 분류'
+                        )
+                        .map((category) => (
+                          <option
+                            key={category}
+                            value={category}
+                          >
+                            {category}
+                          </option>
+                        ))}
+                    </select>
+                  </dd>
+                </div>
+
+                <div>
+                  <dt>
+                    게시 상태
+                    {' '}
+                    <em className={styles.requiredMark}>
+                      *
+                    </em>
+                  </dt>
+
+                  <dd>
+                    <select
+                      value={draftStatus}
+                      onChange={(event) =>
+                        setDraftStatus(
+                          event.target.value
+                        )
+                      }
+                      required
+                    >
+                      <option value="published">
+                        게시 중
+                      </option>
+
+                      <option value="draft">
+                        숨김
+                      </option>
+                    </select>
+                  </dd>
+                </div>
+
+                <div>
+                  <dt>
+                    작성일
+                  </dt>
+
+                  <dd>
+                    {isCreating
+                      ? '등록 시 자동 기록'
+                      : formatDateTime(
+                        selectedNotice
+                          ?.createdAt
+                      )}
+                  </dd>
+                </div>
+
+                <div>
+                  <dt>
+                    최근 수정
+                  </dt>
+
+                  <dd>
+                    {isCreating
+                      ? '수정 시 자동 기록'
+                      : formatDateTime(
+                        selectedNotice
+                          ?.updatedAt
+                        || selectedNotice
+                          ?.createdAt
+                      )}
+                  </dd>
+                </div>
+
+                <div>
+                  <dt>
+                    노출 대상
+                  </dt>
+
+                  <dd>
+                    {selectedNotice?.target
+                      || '전체 회원'}
+                  </dd>
+                </div>
+
+                <div>
+                  <dt>
+                    조회수
+                  </dt>
+
+                  <dd>
+                    {Number(
+                      selectedNotice?.views
+                      || 0
+                    ).toLocaleString(
+                      'ko-KR'
+                    )}
+                  </dd>
+                </div>
+
+              </dl>
+
+            </div>
+
+
+            <div className={styles.previewSection}>
+
+              <h4>
+                {isCreating
+                  ? '본문 작성'
+                  : '본문 미리 보기 및 편집'}
+                {' '}
+                <em className={styles.requiredMark}>
+                  *
+                </em>
+              </h4>
+
+              <textarea
+                rows="6"
+                value={draftContent}
+                onChange={(event) =>
+                  setDraftContent(
+                    event.target.value
+                  )
+                }
+                placeholder="공지사항 본문을 입력하세요..."
+                required
+              />
+
+            </div>
+
+
+            <div className={styles.stepFooter}>
+
+              {!isCreating && (
+                <button
+                  type="button"
+                  className={styles.deleteBtn}
+                  onClick={handleDeleteNotice}
+                  disabled={isSaving}
+                >
+                  공지 삭제
+                </button>
+              )}
+
+              <button
+                type="button"
+                className={styles.saveBtn}
+                onClick={handleSaveEdit}
+                disabled={isSaving}
+              >
+                {isSaving
+                  ? '저장 중...'
+                  : isCreating
+                    ? '등록하기'
+                    : '저장하기'}
+              </button>
+
+            </div>
+
+          </aside>
+
+        ) : (
+
+          <aside
+            className={styles.analyticsColumn}
+            ref={panelRef}
+            aria-label="공지사항 분석"
+          >
+
+            <AdminPanel
+              title="공지 상태 분포"
+              eyebrow="STATUS"
+              padding="compact"
+            >
+              <div className={styles.statusOverview}>
+
+                <div className={styles.statusChart}>
+                  <Bar
+                    data={statusChartData}
+                    options={statusChartOptions}
+                  />
+                </div>
+
+                <ul>
+                  <li>
+                    <span className={styles.dotProgress} />
+                    <span>
+                      게시 중
+                    </span>
+                    <strong>
+                      {donutPublishedCount}건
+                    </strong>
+                  </li>
+
+                  <li>
+                    <span className={styles.dotScheduled} />
+                    <span>
+                      숨김
+                    </span>
+                    <strong>
+                      {donutDraftCount}건
+                    </strong>
+                  </li>
+
+                  <li>
+                    <span className={styles.dotImportant} />
+                    <span>
+                      중요 고정
+                    </span>
+                    <strong>
+                      {importantCount}건
+                    </strong>
+                  </li>
+                </ul>
+
+              </div>
+
+              <p className={styles.analyticsCaption}>
+                중요 고정 공지는 게시 상태보다
+                우선해 표시됩니다.
+              </p>
+            </AdminPanel>
+
+
+            <AdminPanel
+              title="분류별 공지 현황"
+              eyebrow="CATEGORY"
+              padding="compact"
+            >
+              <div className={styles.categoryPolarChart}>
+                <PolarArea
+                  data={categoryChartData}
+                  options={categoryChartOptions}
+                />
+              </div>
+
+              <p className={styles.analyticsCaption}>
+                현재 등록 공지 데이터 집계 기준
+              </p>
+            </AdminPanel>
+
+          </aside>
+
+        )}
+
+      </div>
+
+
+      {/* 토스트 알림 */}
+
+      {toastMessage && (
+        <div
+          className={styles.toast}
+          role="status"
+        >
+          <span>
+            {toastMessage}
+          </span>
+
+          <button
+            type="button"
+            onClick={() =>
+              setToastMessage('')
+            }
+            aria-label="알림 닫기"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+    </section>
+  )
+}
+
+
+export default NoticeManage

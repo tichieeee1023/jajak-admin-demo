@@ -1,0 +1,1890 @@
+@use '../../styles/admin/adminVariables' as *;
+@use '../../styles/admin/adminMixins' as *;
+@use '../../styles/admin/adminCommon' as *;
+
+
+// ========================================
+// PAGE
+// ========================================
+
+.page {
+  @extend %admin-page;
+
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+
+  margin: 0;
+
+  // 바깥 좌우/상단 여백은
+  // AdminLayout의 contentViewport가 담당
+  padding:
+    34px
+    0
+    50px;
+
+  box-sizing: border-box;
+}
+
+
+// ========================================
+// SUMMARY
+// ========================================
+
+.summaryArea {
+  @extend %admin-summary-area;
+
+  position: relative;
+  z-index: 1;
+
+  // 전통 문양 안쪽에 카드가 살짝 들어가는 정도만 유지
+  margin-top: -50px;
+}
+
+
+.summaryGrid {
+  @extend %admin-summary-grid;
+
+  width: 90%;
+
+  margin:
+    0
+    auto;
+}
+
+
+// ========================================
+// MANAGEMENT LAYOUT
+// ========================================
+
+.managementGrid {
+  @extend %admin-management-grid;
+
+  width: 100%;
+  min-width: 0;
+
+  margin: 0;
+}
+
+
+// ========================================
+// MEMBER SECTION
+// ========================================
+
+.memberSection {
+  min-width: 0;
+
+  @include admin-panel;
+
+  padding: 20px;
+}
+
+
+// ========================================
+// FILTER
+// ========================================
+
+.selectField {
+  display: block;
+
+  select {
+    min-width: 128px;
+  }
+}
+
+
+// ========================================
+// SCREEN READER
+// ========================================
+
+.srOnly {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+
+  padding: 0;
+  margin: -1px;
+
+  overflow: hidden;
+
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+
+  border: 0;
+}
+
+
+// ========================================
+// SECTION HEADING
+// ========================================
+
+.sectionHeading {
+  min-height: 52px;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 20px;
+  padding-left: 15px;
+
+  margin-bottom: 14px;
+
+  > div {
+    min-width: 0;
+  }
+
+  h2 {
+    margin-top: -40px;
+
+    color:
+      $admin-text-primary;
+
+    font-size: 23px;
+    font-weight: 700;
+    line-height: 1.4;
+
+    letter-spacing:
+      -0.02em;
+  }
+}
+
+
+.memberCount {
+  flex-shrink: 0;
+  padding-right: 15px;
+
+  color:
+    $admin-text-secondary;
+
+  font-size: 15px;
+
+  strong {
+    color:
+      $admin-primary-dark;
+
+    font-size: 15px;
+    font-weight: 700;
+  }
+}
+
+
+// ========================================
+// TABLE WRAP
+// ========================================
+
+.tableWrap {
+  width: 100%;
+  min-width: 0;
+
+  overflow-x: auto;
+
+  border:
+    1px solid
+    $admin-border;
+
+  border-radius:
+    $admin-radius-md;
+
+  background:
+    $admin-surface;
+}
+
+
+// ========================================
+// TABLE
+// ========================================
+
+.memberTable {
+  width: 100%;
+
+  border-collapse:
+    collapse;
+
+  table-layout:
+    fixed;
+
+  th,
+  td {
+    padding:
+      15px
+      12px;
+
+    border-bottom:
+      1px solid
+      $admin-border;
+
+    text-align: left;
+    vertical-align: middle;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+  }
+
+  th {
+    background:
+      #f8f9f8;
+
+    color:
+      $admin-text-secondary;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    letter-spacing:
+      -0.01em;
+  }
+
+  td {
+    color:
+      $admin-text-primary;
+  }
+
+  tbody tr {
+    transition:
+      background
+      0.18s ease;
+  }
+
+  tbody tr:hover {
+    background:
+      #fafcfb;
+  }
+
+  tbody tr:last-child {
+    td {
+      border-bottom: 0;
+    }
+  }
+
+  th:nth-child(1),
+  td:nth-child(1) {
+    width: 13%;
+  }
+
+  th:nth-child(2),
+  td:nth-child(2) {
+    width: 11%;
+  }
+
+  th:nth-child(3),
+  td:nth-child(3) {
+    width: 14%;
+  }
+
+  th:nth-child(4),
+  td:nth-child(4) {
+    width: 11%;
+  }
+
+  th:nth-child(5),
+  td:nth-child(5) {
+    width: 15%;
+  }
+
+  th:nth-child(6),
+  td:nth-child(6) {
+    width: 11%;
+  }
+
+  th:nth-child(7),
+  td:nth-child(7) {
+    width: 11%;
+  }
+
+  th:nth-child(8),
+  td:nth-child(8) {
+    width: 14%;
+
+    text-align: center;
+  }
+}
+
+
+// ========================================
+// SELECTED ROW
+// ========================================
+
+.selectedRow {
+  background:
+    rgba(
+      86,
+      138,
+      128,
+      0.065
+    ) !important;
+}
+
+
+// ========================================
+// MEMBER TABLE TEXT
+// ========================================
+
+.memberId {
+  color:
+    $admin-text-muted;
+
+  font-size: 12px;
+}
+
+
+.memberName {
+  overflow: hidden;
+
+  display: block;
+
+  color:
+    $admin-text-primary;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+}
+
+
+.memberEmail,
+.lastLogin {
+  overflow: hidden;
+
+  display: block;
+
+  color:
+    $admin-text-secondary;
+
+  text-overflow: ellipsis;
+}
+
+
+// ========================================
+// VIEW BUTTON
+// ========================================
+
+.viewButton {
+  min-height: 30px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding:
+    0
+    11px;
+
+  border:
+    1px solid
+    $admin-border-dark;
+
+  border-radius:
+    $admin-radius-sm;
+
+  background:
+    $admin-surface;
+
+  color:
+    $admin-text-secondary;
+
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    color 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease;
+
+  &:hover {
+    color:
+      $admin-primary-dark;
+
+    border-color:
+      rgba(
+        86,
+        138,
+        128,
+        0.5
+      );
+
+    background:
+      $admin-primary-light;
+  }
+}
+
+
+// ========================================
+// MOBILE MEMBER LIST
+// ========================================
+
+.mobileMemberList {
+  display: none;
+}
+
+
+// ========================================
+// PAGINATION
+// ========================================
+
+.pagination {
+  min-height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding:
+    16px
+    12px;
+
+  border-top:
+    1px solid
+    $admin-border;
+
+  button {
+    width: 32px;
+    height: 32px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border:
+      1px solid
+      transparent;
+
+    border-radius:
+      $admin-radius-sm;
+
+    background:
+      transparent;
+
+    color:
+      $admin-text-secondary;
+
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+      background 0.18s ease,
+      border-color 0.18s ease,
+      color 0.18s ease;
+
+    &:hover:not(:disabled) {
+      color:
+        $admin-primary-dark;
+
+      background:
+        $admin-primary-light;
+    }
+
+    &:disabled {
+      opacity: 0.35;
+
+      cursor: default;
+    }
+  }
+}
+
+
+.activePage {
+  color:
+    $admin-surface !important;
+
+  border-color:
+    $admin-primary !important;
+
+  background:
+    $admin-primary !important;
+}
+
+
+// ========================================
+// ANALYTICS COLUMN
+// ========================================
+
+.analyticsColumn {
+  position: sticky;
+
+  top: 24px;
+
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 16px;
+}
+
+
+// ========================================
+// STATUS OVERVIEW
+// ========================================
+
+.statusOverview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 20px;
+
+  ul {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 9px;
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+  }
+
+  li {
+    display: grid;
+
+    grid-template-columns:
+      8px
+      minmax(0, 1fr)
+      auto;
+
+    align-items: center;
+
+    gap: 8px;
+
+    min-height: 28px;
+
+    color:
+      $admin-text-secondary;
+
+    font-size: 12px;
+
+    strong {
+      color:
+        $admin-text-primary;
+
+      font-size: 12px;
+      font-weight: 700;
+    }
+  }
+}
+
+
+// ========================================
+// DONUT
+// ========================================
+
+.statusDonut {
+  position: relative;
+
+  width: 160px;
+  height: 160px;
+
+  flex:
+    0
+    0
+    160px;
+
+  canvas {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+
+.statusDonutCenter {
+  position: absolute;
+
+  inset: 0;
+  z-index: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 1px;
+
+  pointer-events: none;
+
+  span {
+    color:
+      $admin-text-muted;
+
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  strong {
+    color:
+      $admin-text-primary;
+
+    font-size: 27px;
+    font-weight: 700;
+
+    line-height: 1.15;
+  }
+
+  small {
+    margin-left: 2px;
+
+    color:
+      $admin-text-secondary;
+
+    font-size: 12px;
+  }
+}
+
+
+// ========================================
+// DONUT DOT
+// ========================================
+
+.activeDot,
+.suspendedDot {
+  width: 7px;
+  height: 7px;
+
+  display: block;
+
+  border-radius: 50%;
+}
+
+
+.activeDot {
+  background:
+    $admin-primary;
+}
+
+
+.suspendedDot {
+  background:
+    #d6aaa5;
+}
+
+
+// ========================================
+// ACTIVITY BAR
+// ========================================
+
+.activityBars {
+  display: flex;
+  flex-direction: column;
+
+  gap: 16px;
+}
+
+
+.activityBarItem {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+
+  > i {
+    position: relative;
+
+    width: 100%;
+    height: 7px;
+
+    display: block;
+
+    overflow: hidden;
+
+    border-radius:
+      999px;
+
+    background:
+      #eef0ef;
+
+    > b {
+      height: 100%;
+
+      display: block;
+
+      border-radius:
+        inherit;
+
+      background:
+        $admin-primary;
+
+      transition:
+        width
+        0.3s ease;
+    }
+  }
+}
+
+
+.activityBarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  span {
+    color:
+      $admin-text-secondary;
+
+    font-size: 12px;
+  }
+
+  strong {
+    color:
+      $admin-text-primary;
+
+    font-size: 12px;
+    font-weight: 700;
+  }
+}
+
+
+.analyticsCaption {
+  margin:
+    18px
+    0
+    0;
+
+  padding-top:
+    13px;
+
+  border-top:
+    1px solid
+    $admin-border;
+
+  color:
+    $admin-text-muted;
+
+  font-size: 12px;
+  line-height: 1.5;
+
+  text-align: right;
+}
+
+
+// ========================================
+// DETAIL PANEL
+// ========================================
+
+.detailPanel {
+  position: sticky;
+
+  top: 24px;
+
+  min-width: 0;
+
+  @include admin-panel;
+
+  padding: 20px;
+}
+
+
+// ========================================
+// DETAIL HEADER
+// ========================================
+
+.detailHeader {
+  min-height: 46px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding-bottom: 10px;
+
+  border-bottom:
+    1px solid
+    $admin-border;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+
+    gap: 2px;
+  }
+
+  h2 {
+    margin: 7px 0 0;
+
+    color:
+      $admin-text-primary;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    line-height: 30px;
+
+    letter-spacing:
+      -0.02em;
+  }
+
+  > button {
+    width: 30px;
+    height: 30px;
+
+    // 회원 상세 제목 위치에 맞춤
+    margin-top: 7px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border: 0;
+    border-radius: 50%;
+
+    background:
+      #f4f5f4;
+
+    color:
+      $admin-text-secondary;
+
+    font-size: 19px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+      color 0.18s ease,
+      background 0.18s ease;
+
+    &:hover {
+      color:
+        $admin-text-primary;
+
+      background:
+        #eceeed;
+    }
+  }
+}
+
+
+// ========================================
+// PROFILE
+// ========================================
+
+.profileSummary {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 13px;
+
+  padding:
+    18px
+    0;
+
+  > div {
+    min-width: 0;
+
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+
+    gap: 4px;
+  }
+
+  strong {
+    color:
+      $admin-text-primary;
+
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  span {
+    overflow: hidden;
+
+    color:
+      $admin-text-secondary;
+
+    font-size: 13px;
+
+    text-overflow:
+      ellipsis;
+
+    white-space:
+      nowrap;
+  }
+
+  small {
+    margin-top: 3px;
+
+    color:
+      $admin-text-muted;
+
+    font-size: 12px;
+    line-height: 1.45;
+
+    word-break:
+      break-all;
+  }
+}
+
+
+// ========================================
+// AVATAR
+// ========================================
+
+.avatar {
+  width: 48px;
+  height: 48px;
+
+  flex:
+    0
+    0
+    48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background:
+    $admin-primary-light;
+
+  color:
+    $admin-primary-dark;
+
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+}
+
+
+// ========================================
+// DETAIL BLOCK
+// ========================================
+
+.detailBlock {
+  padding:
+    17px
+    0;
+
+  border-top:
+    1px solid
+    $admin-border;
+
+  h3 {
+    margin:
+      0
+      0
+      12px;
+
+    color:
+      $admin-text-primary;
+
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  dl {
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+
+    margin: 0;
+  }
+
+  dl > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 14px;
+  }
+
+  dt {
+    color:
+      $admin-text-muted;
+
+    font-size: 13px;
+  }
+
+  dd {
+    margin: 0;
+
+    color:
+      $admin-text-primary;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    text-align: right;
+  }
+}
+
+
+// ========================================
+// ACCOUNT FIELDS
+// ========================================
+
+.accountFields {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 10px;
+
+  label {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+  }
+
+  label > span {
+    color:
+      $admin-text-muted;
+
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  select {
+    @include admin-control;
+
+    width: 100%;
+
+    padding:
+      0
+      28px
+      0
+      10px;
+
+    font-size: 13px;
+
+    cursor: pointer;
+  }
+}
+
+
+// ========================================
+// ACTIVITY CARDS
+// ========================================
+
+.activityCards {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 8px;
+
+  article {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+
+    padding: 11px;
+
+    border:
+      1px solid
+      $admin-border;
+
+    border-radius:
+      $admin-radius-md;
+
+    background:
+      #fafbfa;
+  }
+
+  article > span {
+    color:
+      $admin-text-muted;
+
+    font-size: 13px;
+  }
+
+  strong {
+    overflow: hidden;
+
+    color:
+      $admin-text-primary;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    line-height: 1.3;
+
+    text-overflow:
+      ellipsis;
+
+    white-space:
+      nowrap;
+  }
+
+  strong small {
+    margin-left: 2px;
+
+    color:
+      $admin-text-secondary;
+
+    font-size: 12px;
+    font-weight: 600;
+  }
+}
+
+
+// ========================================
+// SUSPENSION CONFIRM
+// ========================================
+
+.suspensionConfirm {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+
+  margin-top:
+    14px;
+
+  padding: 12px;
+
+  border:
+    1px solid
+    rgba(
+      201,
+      111,
+      111,
+      0.22
+    );
+
+  border-radius:
+    $admin-radius-md;
+
+  background:
+    $admin-danger-light;
+
+  strong {
+    color:
+      $admin-danger;
+
+    font-size: 13px;
+    font-weight: 700;
+  }
+  margin-bottom: 18px;
+
+  span {
+    color:
+      $admin-text-secondary;
+
+    font-size: 12px;
+  }
+
+  button {
+    width: fit-content;
+
+    margin-top: 4px;
+    padding: 0;
+
+    border: 0;
+
+    background:
+      transparent;
+
+    color:
+      $admin-danger;
+
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+    &:hover{
+      color: #ff1900;
+    }
+  }
+}
+
+
+// ========================================
+// DETAIL FOOTER
+// ========================================
+
+.detailFooter {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 0.8fr)
+    minmax(0, 1.4fr);
+
+  gap: 8px;
+
+  padding-top:
+    17px;
+
+  border-top:
+    1px solid
+    $admin-border;
+
+  button {
+    min-height: 38px;
+
+    border-radius:
+      $admin-radius-sm;
+
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+      opacity 0.18s ease,
+      background 0.18s ease,
+      border-color 0.18s ease;
+
+    &:disabled {
+      opacity: 0.5;
+
+      cursor: default;
+    }
+  }
+}
+
+
+.suspendButton {
+  border:
+    1px solid
+    rgba(
+      201,
+      111,
+      111,
+      0.35
+    );
+
+    text-align: center;
+
+  background:
+    $admin-surface;
+
+  color:
+    $admin-danger;
+
+  &:hover {
+    background:
+      $admin-danger-light;
+  }
+}
+
+
+.saveButton {
+  border:
+    1px solid
+    $admin-primary;
+
+    text-align: center;
+
+  background:
+    $admin-primary;
+
+  color:
+    $admin-surface;
+
+  &:hover:not(:disabled) {
+    background:
+      $admin-primary-dark;
+
+    border-color:
+      $admin-primary-dark;
+  }
+}
+
+
+// ========================================
+// TOAST
+// ========================================
+
+.toast {
+  position: fixed;
+
+  right: 28px;
+  bottom: 28px;
+
+  z-index: 1000;
+
+  min-width: 260px;
+  max-width: 420px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding:
+    13px
+    15px;
+
+  border:
+    1px solid
+    rgba(
+      86,
+      138,
+      128,
+      0.25
+    );
+
+  border-radius:
+    $admin-radius-md;
+
+  background:
+    $admin-surface;
+
+  box-shadow:
+    0
+    10px
+    30px
+    rgba(
+      0,
+      0,
+      0,
+      0.1
+    );
+
+  span {
+    color:
+      $admin-text-primary;
+
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  button {
+    flex-shrink: 0;
+
+    width: 25px;
+    height: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+    border-radius: 50%;
+
+    background:
+      #f3f4f3;
+
+    color:
+      $admin-text-secondary;
+
+    font-size: 16px;
+
+    cursor: pointer;
+  }
+}
+
+
+// ========================================
+// RESPONSIVE - 1280
+// ========================================
+
+@media (max-width: 1280px) {
+  .memberTable {
+    min-width: 820px;
+  }
+}
+
+
+// ========================================
+// RESPONSIVE - 1180
+// ========================================
+
+@media (max-width: 1180px) {
+  .managementGrid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .analyticsColumn,
+  .detailPanel {
+    position: static;
+  }
+
+  .analyticsColumn {
+    display: grid;
+
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .detailPanel {
+    max-width: none;
+  }
+}
+
+
+// ========================================
+// RESPONSIVE - 850
+// ========================================
+
+@media (max-width: 850px) {
+  .summaryArea {
+    // 작은 화면에서는 문양과 카드가
+    // 과하게 겹치지 않도록 완화
+    margin-top: -8px;
+  }
+
+  .summaryGrid {
+    width: 100%;
+  }
+
+  .memberSection {
+    padding: 16px;
+  }
+
+  .analyticsColumn {
+    display: grid;
+
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+  }
+
+  .sectionHeading {
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+
+    gap: 8px;
+  }
+
+  .accountFields,
+  .activityCards {
+    grid-template-columns:
+      1fr;
+  }
+}
+
+
+// ========================================
+// RESPONSIVE - 767
+// ========================================
+
+@media (max-width: 767px) {
+  .page {
+    padding-bottom:
+      30px;
+  }
+
+  .summaryArea {
+    margin-top: 0;
+  }
+
+  .sectionHeading {
+    min-height: auto;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    margin-top: 24px;
+    margin-bottom: 16px;
+
+    > div {
+      min-width: 0;
+    }
+
+    h2 {
+      margin: 0;
+
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+  }
+
+  .memberCount {
+    flex-shrink: 0;
+
+    font-size: 13px;
+
+    strong {
+      font-size: 16px;
+    }
+  }
+
+
+   .summaryGrid {
+    width: 100%;
+    margin-inline: auto;
+  }
+  
+
+  .memberSection {
+    padding: 14px;
+  }
+
+  .memberTable {
+    min-width: 760px;
+  }
+
+  .detailPanel {
+    padding: 16px;
+  }
+
+  .toast {
+    right: 16px;
+    bottom: 16px;
+    left: 16px;
+
+    min-width: 0;
+    max-width: none;
+  }
+  .analyticsCaption {
+    // 마지막 막대 ↔ 회색선
+    margin:
+      40px
+      0
+      0;
+
+    // 회색선 ↔ 날짜/시간
+    padding-top: 20px;
+
+    border-top:
+      1px solid
+      $admin-border;
+
+    font-size: 12px;
+    line-height: 1.3;
+  }
+
+  .analyticsColumn {
+    display: grid;
+
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+  }
+
+
+  // ========================================
+  // MOBILE MEMBER LIST
+  // ========================================
+
+  .selectField {
+    min-width: 0;
+
+    select {
+      width: 100%;
+      min-width: 0;
+    }
+  }
+
+
+  .desktopMemberTable {
+    display: none;
+  }
+
+
+  .tableWrap {
+    overflow: visible;
+
+    border: 0;
+    border-radius: 0;
+
+    background: transparent;
+  }
+
+
+  .mobileMemberList {
+    display: grid;
+
+    gap: 10px;
+  }
+
+
+  .mobileMemberCard {
+    min-width: 0;
+
+    padding: 14px;
+
+    border:
+      1px solid
+      $admin-border;
+
+    border-radius:
+      $admin-radius-md;
+
+    background:
+      $admin-surface;
+
+    box-shadow:
+      0
+      3px
+      12px
+      rgba(42, 65, 61, 0.04);
+  }
+
+
+  .mobileMemberCardSelected {
+    border-color:
+      rgba(
+        86,
+        138,
+        128,
+        0.55
+      );
+
+    background:
+      rgba(
+        86,
+        138,
+        128,
+        0.04
+      );
+  }
+
+
+  .mobileMemberTop {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 10px;
+  }
+
+
+  .mobileMemberIdentity {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    > .avatar {
+      width: 38px;
+      height: 38px;
+
+      flex:
+        0
+        0
+        38px;
+
+      font-size: 14px;
+      line-height:38px;
+    }
+
+    > div {
+      min-width: 0;
+    }
+
+    strong,
+    span {
+      display: block;
+    }
+
+    strong {
+      margin-bottom: 3px;
+
+      color:
+        $admin-text-primary;
+
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    span {
+      overflow: hidden;
+
+      max-width: 150px;
+
+      color:
+        $admin-text-muted;
+
+      font-size: 12px;
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+
+  .mobileMemberBadges {
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+
+    gap: 5px;
+  }
+
+
+  .mobileMemberMeta {
+    display: grid;
+
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+
+    gap:
+      10px
+      12px;
+
+    margin:
+      14px
+      0
+      0;
+
+    padding:
+      12px
+      0;
+
+    border-top:
+      1px solid
+      $admin-border;
+
+    border-bottom:
+      1px solid
+      $admin-border;
+
+    > div {
+      min-width: 0;
+    }
+
+    > div:first-child {
+      grid-column:
+        1 / -1;
+    }
+
+    dt {
+      margin-bottom: 3px;
+
+      color:
+        $admin-text-muted;
+
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    dd {
+      overflow: hidden;
+
+      margin: 0;
+
+      color:
+        $admin-text-primary;
+
+      font-size: 12px;
+      font-weight: 600;
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+
+  .mobileViewButton {
+    width: 100%;
+    min-height: 36px;
+
+    margin-top: 10px;
+    padding:
+      0
+      12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border:
+      1px solid
+      rgba(
+        86,
+        138,
+        128,
+        0.26
+      );
+
+    border-radius:
+      $admin-radius-sm;
+
+    background:
+      $admin-primary-light;
+
+    color:
+      $admin-primary-dark;
+
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    span {
+      font-size: 17px;
+      font-weight: 400;
+      line-height: 1;
+    }
+  }
+
+
+  .analyticsColumn {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .pagination {
+    margin-top: 12px;
+
+    border:
+      1px solid
+      $admin-border;
+
+    border-radius:
+      $admin-radius-md;
+
+    background:
+      $admin-surface;
+  }
+
+}

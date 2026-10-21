@@ -1,0 +1,2853 @@
+@use 'sass:color';
+
+@use '../../styles/admin/adminVariables' as *;
+@use '../../styles/admin/adminMixins' as *;
+@use '../../styles/admin/adminCommon' as *;
+
+
+// ========================================
+// PAGE
+// 상품관리 / 회원관리 / 리뷰관리와 동일한 기준
+// ========================================
+
+.page {
+  @extend %admin-page;
+
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+
+  margin: 0;
+
+  padding:
+    34px
+    0
+    50px;
+
+  box-sizing: border-box;
+}
+
+
+// ========================================
+// SUMMARY
+// ========================================
+
+.summaryArea {
+  @extend %admin-summary-area;
+
+  position: relative;
+  z-index: 1;
+
+  margin-top: -50px;
+}
+
+
+.summaryGrid {
+  @extend %admin-summary-grid;
+
+  width: 90%;
+
+  margin:
+    0
+    auto;
+}
+
+
+// ========================================
+// MANAGEMENT LAYOUT
+// ========================================
+
+.managementGrid {
+  @extend %admin-management-grid;
+
+  width: 100%;
+  min-width: 0;
+
+  margin: 0;
+}
+
+
+// ========================================
+// MAIN SECTION
+// ========================================
+
+.mainSection {
+  min-width: 0;
+
+  @include admin-panel;
+
+  padding: 20px;
+}
+
+
+// ========================================
+// FILTER
+// 실제 검색창 / 초기화 버튼은 AdminFilterBar가 담당
+// ========================================
+
+.selectField {
+  display: block;
+
+  select {
+    min-width: 128px;
+  }
+}
+
+
+.srOnly {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+
+  padding: 0;
+  margin: -1px;
+
+  overflow: hidden;
+
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+
+  border: 0;
+}
+
+
+// ========================================
+// QUICK FILTER
+// 주문관리만의 추가 필터
+// ========================================
+
+.quickFilterArea {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-top: 12px;
+
+  padding:
+    0
+    2px
+    14px;
+
+  border-bottom:
+    1px solid
+    $admin-border;
+
+  > span {
+    flex-shrink: 0;
+
+    color:
+      $admin-text-secondary;
+
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  > div {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 6px;
+  }
+
+  button {
+    min-height: 30px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding:
+      0
+      11px;
+
+    border: 0;
+    border-radius: 999px;
+
+    background:
+      #f0f2f1;
+
+    color:
+      $admin-text-secondary;
+
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+      color 0.18s ease,
+      background 0.18s ease;
+
+    &:hover {
+      color:
+        $admin-primary-dark;
+
+      background:
+        $admin-primary-light;
+    }
+  }
+}
+
+
+.activeQuick {
+  color:
+    $admin-surface !important;
+
+  background:
+    $admin-primary !important;
+}
+
+
+// ========================================
+// SECTION HEADING
+// 상품 목록과 동일한 제목 크기 / 간격
+// ========================================
+
+.sectionHeading {
+  min-height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding:
+    0
+    15px;
+
+  margin-bottom: 14px;
+}
+
+
+.titleWrap {
+  min-width: 0;
+
+  h2 {
+    margin: 0;
+
+    color:
+      $admin-text-primary;
+
+    font-size: 23px;
+    font-weight: 700;
+    line-height: 1.4;
+
+    letter-spacing:
+      -0.02em;
+  }
+}
+
+
+.orderCount {
+  flex-shrink: 0;
+
+  color:
+    $admin-text-secondary;
+
+  font-size: 15px;
+
+  strong {
+    color:
+      $admin-primary-dark;
+
+    font-size: 15px;
+    font-weight: 700;
+  }
+}
+
+
+// ========================================
+// TABLE WRAP
+// 상품관리와 같은 외곽선 / 라운드
+// ========================================
+
+.tableWrap {
+  width: 100%;
+  min-width: 0;
+
+  overflow-x: auto;
+
+  border:
+    1px solid
+    $admin-border;
+
+  border-radius:
+    $admin-radius-md;
+
+  background:
+    $admin-surface;
+
+  -webkit-overflow-scrolling:
+    touch;
+}
+
+
+// ========================================
+// TABLE
+// ========================================
+
+.dataTable {
+  width: 100%;
+  min-width: 920px;
+
+  border-collapse:
+    collapse;
+
+  table-layout:
+    fixed;
+
+  th,
+  td {
+    padding:
+      15px
+      12px;
+
+    border-bottom:
+      1px solid
+      $admin-border;
+
+    text-align: left;
+    vertical-align: middle;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+  }
+
+  th {
+    background:
+      #f8f9f8;
+
+    color:
+      $admin-text-secondary;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    letter-spacing:
+      -0.01em;
+  }
+
+  td {
+    color:
+      $admin-text-primary;
+  }
+
+  tbody tr {
+    cursor: pointer;
+
+    transition:
+      background 0.18s ease;
+  }
+
+  tbody tr:hover {
+    background:
+      #fafcfb;
+  }
+
+  tbody tr:last-child {
+    td {
+      border-bottom: 0;
+    }
+  }
+
+  th:nth-child(1),
+  td:nth-child(1) {
+    width: 13%;
+  }
+
+  th:nth-child(2),
+  td:nth-child(2) {
+    width: 10%;
+  }
+
+  th:nth-child(3),
+  td:nth-child(3) {
+    width: 22%;
+  }
+
+  th:nth-child(4),
+  td:nth-child(4) {
+    width: 12%;
+  }
+
+  th:nth-child(5),
+  td:nth-child(5) {
+    width: 13%;
+  }
+
+  th:nth-child(6),
+  td:nth-child(6) {
+    width: 11%;
+  }
+
+  th:nth-child(7),
+  td:nth-child(7) {
+    width: 11%;
+  }
+
+  th:nth-child(8),
+  td:nth-child(8) {
+    width: 8%;
+
+    text-align: center;
+  }
+}
+
+
+.selectedRow {
+  background:
+    rgba(
+      86,
+      138,
+      128,
+      0.065
+    ) !important;
+}
+
+
+.orderId {
+  color:
+    $admin-text-muted;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+
+.productCell {
+  overflow: hidden;
+
+  color:
+    $admin-text-primary !important;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+}
+
+
+// ========================================
+// DETAIL BUTTON
+// 상품관리 수정 버튼과 같은 크기
+// ========================================
+
+.detailButton {
+  min-height: 30px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding:
+    0
+    11px;
+
+  border:
+    1px solid
+    $admin-border-dark;
+
+  border-radius:
+    $admin-radius-sm;
+
+  background:
+    $admin-surface;
+
+  color:
+    $admin-text-secondary;
+
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    color 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease;
+
+  &:hover {
+    color:
+      $admin-primary-dark;
+
+    border-color:
+      rgba(
+        86,
+        138,
+        128,
+        0.5
+      );
+
+    background:
+      $admin-primary-light;
+  }
+}
+
+
+// ========================================
+// PAGINATION
+// 회원 / 리뷰 / 상품과 동일
+// ========================================
+
+.pagination {
+  min-height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding:
+    16px
+    12px;
+
+  border-top:
+    1px solid
+    $admin-border;
+
+  button {
+    width: 32px;
+    height: 32px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border:
+      1px solid
+      transparent;
+
+    border-radius:
+      $admin-radius-sm;
+
+    background:
+      transparent;
+
+    color:
+      $admin-text-secondary;
+
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+      background 0.18s ease,
+      border-color 0.18s ease,
+      color 0.18s ease;
+
+    &:hover:not(:disabled) {
+      color:
+        $admin-primary-dark;
+
+      background:
+        $admin-primary-light;
+    }
+
+    &:disabled {
+      opacity: 0.35;
+
+      cursor: default;
+    }
+  }
+}
+
+
+.activePage {
+  color:
+    $admin-surface !important;
+
+  border-color:
+    $admin-primary !important;
+
+  background:
+    $admin-primary !important;
+}
+
+
+// ========================================
+// ANALYTICS
+// 상품관리 우측 분석 패널 비율과 동일
+// ========================================
+
+.analyticsColumn {
+  position: sticky;
+
+  top: 24px;
+
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 16px;
+}
+
+
+.statusOverview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 20px;
+
+  ul {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 9px;
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+  }
+
+  li {
+    min-height: 28px;
+
+    display: grid;
+
+    grid-template-columns:
+      8px
+      minmax(0, 1fr)
+      auto;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color:
+      $admin-text-secondary;
+
+    font-size: 12px;
+
+    strong {
+      color:
+        $admin-text-primary;
+
+      font-size: 12px;
+      font-weight: 700;
+    }
+  }
+}
+
+
+.statusStackedChart {
+  position: relative;
+
+  width: 100%;
+  height: 58px;
+
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+
+.dotReady,
+.dotShipping,
+.dotCompleted,
+.dotRefund {
+  width: 7px;
+  height: 7px;
+
+  display: block;
+  flex-shrink: 0;
+
+  border-radius: 50%;
+}
+
+
+.dotReady {
+  background:
+    $admin-primary;
+}
+
+
+.dotShipping {
+  background:
+    #6f9bac;
+}
+
+
+.dotCompleted {
+  background:
+    #aacdbf;
+}
+
+
+.dotRefund {
+  background:
+    #d69a95;
+}
+
+
+// ========================================
+// 7 DAY CHART
+// ========================================
+
+.chartLegend {
+  margin-top: 2px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  span {
+    display: flex;
+    align-items: center;
+
+    gap: 4px;
+
+    color:
+      $admin-text-muted;
+
+    font-size: 12px;
+  }
+
+  i {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+  }
+}
+
+
+.orderLegend {
+  background:
+    $admin-primary;
+}
+
+
+.cancelLegend {
+  background:
+    #d69a95;
+}
+
+
+.lineChart {
+  position: relative;
+
+  width: 100%;
+  height: 160px;
+
+  margin-top: 12px;
+
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+
+.weekCompare {
+  min-height: 64px;
+
+  margin-top: 16px;
+
+  padding:
+    10px
+    11px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  border:
+    1px solid
+    rgba(
+      86,
+      138,
+      128,
+      0.28
+    );
+
+  border-radius:
+    $admin-radius-sm;
+
+  background:
+    $admin-primary-light;
+
+  > div:nth-child(2) {
+    flex: 1;
+
+    span {
+      display: block;
+
+      color:
+        $admin-text-muted;
+
+      font-size: 12px;
+    }
+
+    strong {
+      display: block;
+
+      margin-top: 2px;
+
+      color:
+        $admin-primary-dark;
+
+      font-size: 15px;
+    }
+  }
+
+  dl {
+    margin: 0;
+
+    padding-left: 10px;
+
+    border-left:
+      1px solid
+      $admin-border;
+
+    div {
+      display: flex;
+
+      gap: 5px;
+
+      + div {
+        margin-top: 4px;
+      }
+    }
+
+    dt {
+      color:
+        $admin-text-muted;
+
+      font-size: 12px;
+    }
+
+    dd {
+      margin: 0;
+
+      color:
+        $admin-text-primary;
+
+      font-size: 12px;
+      font-weight: 600;
+    }
+  }
+}
+
+
+.compareIcon {
+  width: 32px;
+  height: 32px;
+
+  flex:
+    0
+    0
+    32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(
+      86,
+      138,
+      128,
+      0.12
+    );
+
+  color:
+    $admin-primary-dark;
+
+  font-size: 14px;
+}
+
+
+// ========================================
+// DETAIL STATUS TONES
+// 주문 상세 패널 내부에서 사용
+// ========================================
+
+.paid {
+  color: #4e8a84;
+  border-color: #9fc7c1;
+  background: #f5fbfa;
+}
+
+
+.refund {
+  color: #dd665f;
+  border-color: #efaaa4;
+  background: #fff6f5;
+}
+
+
+.ready {
+  color: #b88635;
+  border-color: #e8c785;
+  background: #fffbf2;
+}
+
+
+.shipping {
+  color: #528ba4;
+  border-color: #9ac5d7;
+  background: #f4fafc;
+}
+
+
+.completed {
+  color: #4d8875;
+  border-color: #a8cdbf;
+  background: #f5fbf7;
+}
+
+
+.waiting {
+  color: #7e7871;
+  border-color: #ccc6bf;
+  background: #faf9f7;
+}
+
+
+// ========================================
+// ORDER DETAIL
+// 기존 주문 처리 기능 UI는 유지
+// ========================================
+
+.detailBackdrop {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 200;
+
+  border: 0;
+
+  background:
+    rgba(
+      29,
+      34,
+      32,
+      0.22
+    );
+
+  backdrop-filter:
+    blur(2px);
+}
+
+
+.detailPanel {
+  position: fixed;
+
+  top: 79px;
+  right: 0;
+  bottom: 0;
+
+  z-index: 210;
+
+  width:
+    min(
+      920px,
+      calc(100vw - 275px)
+    );
+
+  min-width: 720px;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  border-left:
+    1px solid
+    $admin-border;
+
+  border-radius:
+    24px
+    0
+    0
+    0;
+
+  background:
+    #f8f7f3;
+
+  box-shadow:
+    -16px
+    0
+    40px
+    rgba(
+      24,
+      31,
+      28,
+      0.15
+    );
+
+  animation:
+    detailOpen
+    0.27s
+    ease
+    both;
+}
+
+
+@keyframes detailOpen {
+  from {
+    opacity: 0;
+
+    transform:
+      translateX(36px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateX(0);
+  }
+}
+
+
+// ========================================
+// DETAIL HEADER
+// ========================================
+
+.detailHeader {
+  min-height: 70px;
+
+  flex:
+    0
+    0
+    auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding:
+    0
+    26px;
+
+  border-bottom:
+    1px solid
+    $admin-border;
+
+  background:
+    rgba(
+      248,
+      247,
+      243,
+      0.96
+    );
+
+  h2 {
+    margin: 0;
+
+    color:
+      $admin-text-primary;
+
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.3;
+
+    letter-spacing:
+      -0.025em;
+  }
+
+  button {
+    width: 30px;
+    height: 30px;
+
+    flex:
+      0
+      0
+      30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 50%;
+
+    background:
+      #eff1f0;
+
+    color:
+      $admin-text-secondary;
+
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+      color 0.18s ease,
+      background 0.18s ease;
+
+    &:hover {
+      color:
+        $admin-text-primary;
+
+      background:
+        #e8ebe9;
+    }
+  }
+}
+
+
+.detailScroll {
+  min-height: 0;
+
+  flex: 1;
+
+  padding:
+    20px
+    24px
+    28px;
+
+  overflow-y: auto;
+
+  scrollbar-width: thin;
+
+  scrollbar-color:
+    #c7cfca
+    transparent;
+}
+
+
+// ========================================
+// DETAIL COMMON CARD
+// ========================================
+
+.orderSummary,
+.detailSection,
+.shippingManage {
+  border:
+    1px solid
+    $admin-border;
+
+  border-radius:
+    $admin-radius-md;
+
+  background:
+    $admin-surface;
+
+  box-shadow:
+    0
+    2px
+    8px
+    rgba(
+      34,
+      37,
+      36,
+      0.03
+    );
+}
+
+
+// ========================================
+// ORDER SUMMARY
+// ========================================
+
+.orderSummary {
+  min-height: 84px;
+
+  display: grid;
+
+  grid-template-columns:
+    1.35fr
+    1fr
+    0.9fr
+    0.9fr
+    1fr;
+
+  align-items: stretch;
+
+  padding:
+    14px
+    16px;
+
+  margin-bottom: 12px;
+
+  > div {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding:
+      0
+      14px;
+
+    border-right:
+      1px solid
+      $admin-border;
+
+    &:first-child {
+      padding-left: 0;
+    }
+
+    &:last-child {
+      padding-right: 0;
+
+      border-right: 0;
+    }
+
+    > span {
+      display: block;
+
+      margin-bottom: 7px;
+
+      color:
+        $admin-text-muted;
+
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    > strong {
+      min-width: 0;
+
+      overflow: hidden;
+
+      color:
+        $admin-text-primary;
+
+      font-size: 13px;
+      font-weight: 700;
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      small {
+        margin-left: 5px;
+
+        color:
+          $admin-text-muted;
+
+        font-size: 13px;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+
+.detailStatus {
+  min-width: 58px;
+  min-height: 26px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding:
+    0
+    9px;
+
+  box-sizing: border-box;
+
+  border:
+    1px solid;
+
+  border-radius:
+    999px;
+
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+
+.totalPrice {
+  color:
+    $admin-text-primary !important;
+
+  font-size:
+    15px !important;
+
+  font-weight:
+    700 !important;
+}
+
+
+// ========================================
+// DETAIL SECTION
+// ========================================
+
+.detailSection {
+  margin-bottom: 12px;
+
+  padding:
+    17px
+    18px;
+
+  > h3,
+  .sectionTitleRow h3 {
+    margin:
+      0
+      0
+      14px;
+
+    color:
+      $admin-text-primary;
+
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.35;
+
+    letter-spacing:
+      -0.015em;
+
+    > span {
+      margin-left: 5px;
+
+      color:
+        $admin-primary-dark;
+
+      font-size: 14px;
+      font-weight: 700;
+    }
+  }
+}
+
+
+// ========================================
+// PROGRESS
+// ========================================
+
+.progress {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      5,
+      1fr
+    );
+
+  padding-top: 3px;
+
+  &::before {
+    position: absolute;
+
+    top: 17px;
+    right: 10%;
+    left: 10%;
+
+    height: 1px;
+
+    background:
+      #dce3df;
+
+    content: '';
+  }
+}
+
+
+.progressItem {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  strong {
+    margin-top: 7px;
+
+    color:
+      $admin-text-secondary;
+
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  small {
+    margin-top: 3px;
+
+    color:
+      $admin-text-muted;
+
+    font-size: 12px;
+  }
+}
+
+
+.stepCircle {
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border:
+    1px solid
+    #d0d9d4;
+
+  border-radius: 50%;
+
+  background:
+    $admin-surface;
+
+  color:
+    $admin-text-muted;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.stepDateTime {
+  min-height: 30px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  gap: 2px;
+
+  margin-top: 5px;
+
+  color:
+    $admin-text-muted;
+
+  font-size: 12px;
+  line-height: 1.3;
+
+  white-space: nowrap;
+
+  span {
+    display: block;
+  }
+}
+
+
+.stepDone {
+  border-color:
+    $admin-primary;
+
+  background:
+    $admin-primary;
+
+  color:
+    $admin-surface;
+}
+
+
+.stepCurrent {
+  border:
+    2px solid
+    $admin-primary;
+
+  background:
+    $admin-primary-light;
+
+  color:
+    $admin-primary-dark;
+}
+
+
+// ========================================
+// DETAIL TWO COLUMN
+// ========================================
+
+.detailTwoColumn {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 12px;
+
+  > .detailSection {
+    margin-bottom: 12px;
+  }
+}
+
+
+// ========================================
+// PRODUCT
+// ========================================
+
+.productList {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+
+.orderProduct {
+  min-height: 58px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding:
+    8px
+    10px;
+
+  border:
+    1px solid
+    #e7ebe8;
+
+  border-radius:
+    $admin-radius-sm;
+
+  background:
+    #fbfcfb;
+
+  > div {
+    min-width: 0;
+
+    flex: 1;
+
+    strong {
+      display: block;
+
+      overflow: hidden;
+
+      color:
+        $admin-text-primary;
+
+      font-size: 13px;
+      font-weight: 700;
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    small {
+      display: block;
+
+      margin-top: 4px;
+
+      color:
+        $admin-text-muted;
+
+      font-size: 12px;
+    }
+  }
+
+  > p {
+    flex-shrink: 0;
+
+    margin: 0;
+
+    text-align: right;
+
+    strong {
+      display: block;
+
+      color:
+        $admin-text-primary;
+
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    small {
+      display: block;
+
+      margin-top: 4px;
+
+      color:
+        $admin-text-muted;
+
+      font-size: 12px;
+    }
+  }
+}
+
+
+.productThumb {
+  width: 42px;
+  height: 42px;
+
+  flex:
+    0
+    0
+    42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  border-radius:
+    6px;
+
+  background:
+    #f1f0eb;
+
+  font-size: 18px;
+
+  img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+  }
+}
+
+
+// ========================================
+// INFO LIST
+// ========================================
+
+.infoList {
+  display: flex;
+  flex-direction: column;
+
+  gap: 9px;
+
+  margin: 0;
+
+  > div {
+    display: grid;
+
+    grid-template-columns:
+      74px
+      minmax(0, 1fr);
+
+    gap: 10px;
+  }
+
+  dt {
+    color:
+      $admin-text-muted;
+
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  dd {
+    min-width: 0;
+
+    margin: 0;
+
+    overflow-wrap: anywhere;
+
+    color:
+      $admin-text-secondary;
+
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+}
+
+
+.totalRow {
+  margin-top: 5px;
+
+  padding-top: 9px;
+
+  border-top:
+    1px solid
+    $admin-border;
+
+  dt,
+  dd {
+    color:
+      $admin-text-primary;
+
+    font-size: 13px;
+    font-weight: 700;
+  }
+}
+
+
+.sectionTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-bottom: 14px;
+
+  h3 {
+    margin-bottom:
+      0 !important;
+  }
+
+  button {
+    min-height: 28px;
+
+    padding:
+      0
+      10px;
+
+    border:
+      1px solid
+      $admin-border-dark;
+
+    border-radius:
+      $admin-radius-sm;
+
+    background:
+      $admin-surface;
+
+    color:
+      $admin-text-secondary;
+
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    &:hover {
+      color:
+        $admin-primary-dark;
+
+      border-color:
+        rgba(
+          86,
+          138,
+          128,
+          0.5
+        );
+
+      background:
+        $admin-primary-light;
+    }
+  }
+}
+
+
+// ========================================
+// HISTORY
+// ========================================
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+
+  > div {
+    position: relative;
+
+    min-height: 34px;
+
+    display: grid;
+
+    grid-template-columns:
+      8px
+      104px
+      72px
+      minmax(0, 1fr);
+
+    align-items: start;
+
+    gap: 9px;
+
+    &::before {
+      position: absolute;
+
+      top: 8px;
+      bottom: -7px;
+      left: 3px;
+
+      width: 1px;
+
+      background:
+        #d9e1dc;
+
+      content: '';
+    }
+
+    &:last-child::before {
+      display: none;
+    }
+
+    > i {
+      position: relative;
+      z-index: 1;
+
+      width: 7px;
+      height: 7px;
+
+      margin-top: 2px;
+
+      border-radius: 50%;
+
+      background:
+        $admin-primary;
+    }
+
+    > span {
+      color:
+        $admin-text-muted;
+
+      font-size: 12px;
+
+      small {
+        margin-left: 4px;
+
+        color:
+          #a8aeaa;
+
+        font-size: 12px;
+      }
+    }
+
+    > strong {
+      color:
+        $admin-text-secondary;
+
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    > p {
+      margin: 0;
+
+      color:
+        $admin-text-muted;
+
+      font-size: 12px;
+      line-height: 1.4;
+    }
+  }
+}
+
+
+// ========================================
+// SHIPPING MANAGE
+// ========================================
+
+.shippingManage {
+  padding:
+    18px;
+
+  margin-bottom: 0;
+}
+
+
+.shippingHeader {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-bottom: 15px;
+
+  > span {
+    width: 24px;
+    height: 24px;
+
+    flex:
+      0
+      0
+      24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+      $admin-primary;
+
+    color:
+      $admin-surface;
+
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  h3 {
+    margin: 0;
+
+    color:
+      $admin-text-primary;
+
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  p {
+    margin:
+      3px
+      0
+      0;
+
+    color:
+      $admin-text-muted;
+
+    font-size: 12px;
+  }
+}
+
+
+.shippingContent {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 0.85fr)
+    minmax(0, 1.4fr);
+
+  gap: 12px;
+}
+
+
+// ========================================
+// CHECKLIST
+// ========================================
+
+.checkList {
+  padding:
+    13px;
+
+  border:
+    1px solid
+    $admin-border;
+
+  border-radius:
+    $admin-radius-sm;
+
+  background:
+    #fafbf9;
+
+  h4 {
+    margin:
+      0
+      0
+      11px;
+
+    color:
+      $admin-text-secondary;
+
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  label {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 7px;
+
+    margin-bottom: 8px;
+
+    cursor: pointer;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    input {
+      width: 13px;
+      height: 13px;
+
+      flex-shrink: 0;
+
+      margin:
+        1px
+        0
+        0;
+
+      accent-color:
+        $admin-primary;
+    }
+
+    > span {
+      color:
+        $admin-text-muted;
+
+      font-size: 12px;
+      line-height: 1.4;
+
+      strong {
+        display: block;
+
+        margin-bottom: 2px;
+
+        color:
+          $admin-text-secondary;
+
+        font-size: 12px;
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+
+// ========================================
+// SHIPPING FORM
+// ========================================
+
+.shippingForm {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+
+.formRow {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 10px;
+}
+
+
+.shippingForm label {
+  min-width: 0;
+
+  > span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color:
+      $admin-text-secondary;
+
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  select,
+  input,
+  textarea {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    border:
+      1px solid
+      $admin-border;
+
+    border-radius:
+      $admin-radius-sm;
+
+    outline: 0;
+
+    background:
+      $admin-surface;
+
+    color:
+      $admin-text-primary;
+
+    font: inherit;
+    font-size: 12px;
+
+    &:focus {
+      border-color:
+        $admin-primary;
+
+      box-shadow:
+        0
+        0
+        0
+        2px
+        rgba(
+          86,
+          138,
+          128,
+          0.08
+        );
+    }
+
+    &::placeholder {
+      color:
+        #aab0ac;
+    }
+  }
+
+  select,
+  input {
+    height: 34px;
+
+    padding:
+      0
+      9px;
+  }
+}
+
+
+.memoField {
+  position: relative;
+
+  textarea {
+    min-height: 64px;
+
+    padding:
+      9px
+      9px
+      20px;
+
+    resize: none;
+
+    line-height: 1.45;
+  }
+
+  small {
+    position: absolute;
+
+    right: 8px;
+    bottom: 7px;
+
+    color:
+      $admin-text-muted;
+
+    font-size: 12px;
+  }
+}
+
+
+// ========================================
+// DETAIL FOOTER
+// 관리자 공통 버튼 체계
+// ========================================
+
+.detailFooter {
+  min-height: 70px;
+
+  flex:
+    0
+    0
+    auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  padding:
+    11px
+    24px;
+
+  border-top:
+    1px solid
+    $admin-border;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.96
+    );
+
+  > div {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+  }
+
+  button {
+    min-height: 38px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding:
+      0
+      15px;
+
+    border-radius:
+      $admin-radius-sm;
+
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+      color 0.18s ease,
+      border-color 0.18s ease,
+      background 0.18s ease,
+      opacity 0.18s ease;
+
+    &:disabled {
+      opacity: 0.45;
+
+      cursor: default;
+    }
+  }
+}
+
+
+.cancelOrder {
+  min-width: 118px;
+
+  border:
+    1px solid
+    $admin-danger;
+
+  background:
+    $admin-surface;
+
+  color:
+    $admin-danger;
+
+  &:hover:not(:disabled) {
+    background:
+      $admin-danger-light;
+  }
+}
+
+
+.tempSave {
+  min-width: 126px;
+
+  border:
+    1px solid
+    $admin-border-dark;
+
+  background:
+    $admin-surface;
+
+  color:
+    $admin-text-secondary;
+
+  &:hover:not(:disabled) {
+    color:
+      $admin-primary-dark;
+
+    border-color:
+      rgba(
+        86,
+        138,
+        128,
+        0.5
+      );
+
+    background:
+      $admin-primary-light;
+  }
+}
+
+
+.startShipping {
+  min-width: 138px;
+
+  gap: 7px;
+
+  border:
+    1px solid
+    $admin-primary;
+
+  background:
+    $admin-primary;
+
+  color:
+    $admin-surface;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  &:hover:not(:disabled) {
+    background:
+      $admin-primary-dark;
+  }
+}
+
+
+// ========================================
+// RESPONSIVE
+// ========================================
+
+@media (max-width: 1180px) {
+  .managementGrid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .analyticsColumn {
+    position: static;
+
+    display: grid;
+
+    grid-template-columns:
+      1fr;
+
+    gap: 12px;
+
+    align-items: start;
+  }
+}
+
+
+@media (max-width: 850px) {
+  .summaryArea {
+    margin-top:
+      -8px;
+  }
+
+  .summaryGrid {
+    width: 100%;
+  }
+
+  .mainSection {
+    padding: 16px;
+  }
+
+  .analyticsColumn {
+    display: grid;
+
+    grid-template-columns:
+      1fr;
+
+    gap: 12px;
+
+    align-items: start;
+  }
+}
+
+
+@media (max-width: 767px) {
+  .page {
+    padding-bottom:
+      30px;
+  }
+
+  .summaryArea {
+    margin-top: 0;
+  }
+
+  .summaryGrid {
+    width: 100%;
+
+    margin-inline:
+      auto;
+  }
+
+  .mainSection {
+    padding: 14px;
+  }
+
+  .selectField {
+    width: 100%;
+    min-width: 0;
+
+    select {
+      width: 100%;
+      min-width: 0;
+    }
+  }
+
+  .quickFilterArea {
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 12px;
+
+    padding:
+      0
+      2px
+      14px;
+
+    > span {
+      font-size: 12px;
+      line-height: 30px;
+      white-space: nowrap;
+    }
+
+    > div {
+      min-width: 0;
+
+      flex: 1;
+
+      flex-wrap: nowrap;
+
+      gap: 5px;
+
+      overflow-x: auto;
+      overflow-y: hidden;
+
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-x;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    button {
+      flex:
+        0
+        0
+        auto;
+
+      min-width: max-content;
+      min-height: 30px;
+
+      padding:
+        0
+        10px;
+
+      font-size: 12px;
+      line-height: 1;
+    }
+  }
+
+  .sectionHeading {
+    min-height: auto;
+
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    margin-top: 20px;
+    margin-bottom: 16px;
+
+    padding:
+      0
+      2px;
+  }
+
+  .titleWrap {
+    h2 {
+      margin: 0;
+
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+  }
+
+  .orderCount {
+    font-size: 13px;
+
+    strong {
+      font-size: 16px;
+    }
+  }
+
+  .tableWrap {
+    width: 100%;
+
+    overflow-x: auto;
+
+    overscroll-behavior-inline:
+      contain;
+
+    -webkit-overflow-scrolling:
+      touch;
+  }
+
+  .dataTable {
+    min-width: 880px;
+  }
+
+  .analyticsColumn {
+    display: grid;
+
+    grid-template-columns:
+      1fr;
+
+    gap: 12px;
+
+    align-items: start;
+  }
+
+  .statusStackedChart {
+    height: 52px;
+  }
+
+  .statusOverview {
+    gap: 14px;
+
+    li {
+      font-size: 12px;
+
+      strong {
+        font-size: 12px;
+      }
+    }
+  }
+
+  .chartLegend {
+    gap: 6px;
+
+    span {
+      font-size: 12px;
+    }
+  }
+
+  .lineChart {
+    height: 140px;
+
+    margin-top: 10px;
+  }
+
+  .weekCompare {
+    min-height: 58px;
+
+    padding: 8px;
+
+    gap: 7px;
+
+    > div:nth-child(2) {
+      span {
+        font-size: 12px;
+      }
+
+      strong {
+        font-size: 13px;
+      }
+    }
+
+    dl {
+      padding-left: 7px;
+
+      dt {
+        font-size: 12px;
+      }
+
+      dd {
+        font-size: 12px;
+      }
+    }
+  }
+
+  .compareIcon {
+    width: 28px;
+    height: 28px;
+
+    flex:
+      0
+      0
+      28px;
+
+    font-size: 12px;
+  }
+
+  .detailPanel {
+    top: 70px;
+    right: 0;
+    bottom: 0;
+
+    width: 100vw;
+    min-width: 0;
+    max-width: none;
+
+    border-radius:
+      20px
+      20px
+      0
+      0;
+  }
+}
+
+
+@media (max-width: 520px) {
+  .analyticsColumn {
+    gap: 10px;
+  }
+
+  .statusStackedChart {
+    height: 48px;
+  }
+
+  .lineChart {
+    height: 132px;
+  }
+
+  .weekCompare {
+    dl {
+      display: none;
+    }
+  }
+}
+
+
+// ========================================
+// WIDE DETAIL RESPONSIVE
+// ========================================
+
+@media (max-width: 1180px) {
+  .detailPanel {
+    width:
+      min(
+        820px,
+        calc(100vw - 190px)
+      );
+
+    min-width: 640px;
+  }
+}
+
+
+@media (max-width: 900px) {
+  .detailPanel {
+    width:
+      calc(100vw - 120px);
+
+    min-width: 0;
+  }
+
+  .orderSummary {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+
+    gap: 0;
+
+    > div {
+      padding:
+        11px
+        12px;
+
+      border-right:
+        1px solid
+        $admin-border;
+
+      border-bottom:
+        1px solid
+        $admin-border;
+
+      &:first-child {
+        padding-left: 12px;
+      }
+
+      &:last-child {
+        padding-right: 12px;
+
+        border-right:
+          1px solid
+          $admin-border;
+      }
+
+      &:nth-child(even) {
+        border-right: 0;
+      }
+
+      &:nth-last-child(-n + 2) {
+        border-bottom: 0;
+      }
+    }
+  }
+}
+
+
+@media (max-width: 767px) {
+  .detailPanel {
+    top: 70px;
+
+    width: 100vw;
+
+    min-width: 0;
+
+    border-left: 0;
+
+    border-radius:
+      20px
+      20px
+      0
+      0;
+  }
+
+  .detailHeader {
+    min-height: 62px;
+
+    padding:
+      0
+      18px;
+
+    h2 {
+      font-size: 20px;
+    }
+  }
+
+  .detailScroll {
+    padding:
+      16px
+      16px
+      22px;
+  }
+
+  .orderSummary {
+    grid-template-columns:
+      1fr;
+
+    padding: 0;
+
+    > div {
+      padding:
+        12px
+        14px !important;
+
+      border-right: 0 !important;
+
+      border-bottom:
+        1px solid
+        $admin-border !important;
+
+      &:last-child {
+        border-bottom:
+          0 !important;
+      }
+
+      > span {
+        margin-bottom: 4px;
+      }
+    }
+  }
+
+  .detailTwoColumn {
+    grid-template-columns:
+      1fr;
+
+    gap: 0;
+  }
+
+  .detailSection {
+    padding:
+      15px;
+
+    > h3,
+    .sectionTitleRow h3 {
+      font-size: 13px;
+    }
+  }
+
+  .progress {
+    overflow-x: auto;
+
+    grid-template-columns:
+      repeat(
+        5,
+        minmax(82px, 1fr)
+      );
+
+    padding-bottom: 5px;
+  }
+
+  .shippingContent {
+    grid-template-columns:
+      1fr;
+  }
+
+  .formRow {
+    grid-template-columns:
+      1fr;
+  }
+
+  .historyList {
+    > div {
+      grid-template-columns:
+        8px
+        82px
+        58px
+        minmax(0, 1fr);
+
+      gap: 7px;
+    }
+  }
+
+  .detailFooter {
+    min-height: auto;
+
+    align-items: stretch;
+
+    flex-direction: column;
+
+    padding:
+      10px
+      16px
+      14px;
+
+    > div {
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(0, 1fr)
+        );
+    }
+
+    button {
+      width: 100%;
+      min-width: 0;
+    }
+  }
+}
+
+
+@media (max-width: 480px) {
+  .historyList {
+    > div {
+      grid-template-columns:
+        8px
+        1fr;
+
+      > span,
+      > strong,
+      > p {
+        grid-column: 2;
+      }
+    }
+  }
+}

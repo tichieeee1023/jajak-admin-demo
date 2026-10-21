@@ -1,0 +1,298 @@
+.adminHeader {
+  position: relative;
+  z-index: 100;
+
+  width: 100%;
+  height: 64px;
+
+  background: #faf9f5;
+  border-bottom: 1px solid #ece9e1;
+}
+
+.inner {
+  width: 100%;
+  height: 100%;
+
+  padding: 0 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+// ==============================
+// 로고
+// ==============================
+
+.logoArea {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  color: #111;
+  text-decoration: none;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.6px;
+}
+
+.adminLabel {
+  height: 18px;
+
+  padding: 0 8px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 3px;
+
+  background: #4e827d;
+  color: #fff;
+
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.3px;
+}
+
+
+// ==============================
+// 오른쪽 메뉴
+// ==============================
+
+.rightArea {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.headerAction {
+  padding: 8px 0;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  border: 0;
+  background: transparent;
+
+  color: #65615b;
+  text-decoration: none;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition: color 0.2s ease;
+
+  svg {
+    width: 15px;
+    height: 15px;
+
+    flex-shrink: 0;
+
+    fill: none;
+
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:hover {
+    color: #111;
+  }
+}
+
+
+// ==============================
+// 사이트 바로가기
+// ==============================
+
+.shortcutWrap {
+  position: relative;
+}
+
+.shortcutButton {
+  position: relative;
+}
+
+.chevron {
+  width: 6px;
+  height: 6px;
+
+  margin-left: 2px;
+
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+
+  transform: rotate(45deg) translateY(-2px);
+
+  transition: transform 0.2s ease;
+}
+
+.chevronOpen {
+  transform: rotate(225deg) translate(-1px, -1px);
+}
+
+.active {
+  color: #111;
+}
+
+
+// ==============================
+// 드롭다운
+// ==============================
+
+.dropdownLayer {
+  position: absolute;
+  top: calc(100% + 11px);
+  right: 0;
+
+  width: 220px;
+
+  z-index: 200;
+}
+
+.shortcutMenu {
+  overflow: hidden;
+
+  width: 100%;
+
+  background: #fff;
+
+  border: 1px solid #e7e3db;
+  border-radius: 8px;
+
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.04),
+    0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+
+// ==============================
+// 드롭다운 헤더
+// ==============================
+
+.menuHeader {
+  padding: 16px 18px 14px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  background: #faf9f5;
+
+  border-bottom: 1px solid #eeebe5;
+
+  span {
+    color: #4e827d;
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+  }
+
+  strong {
+    color: #222;
+
+    font-size: 13px;
+    font-weight: 600;
+  }
+}
+
+
+// ==============================
+// 메뉴
+// ==============================
+
+.menuList {
+  padding: 7px;
+}
+
+.menuItem {
+  width: 100%;
+  min-height: 42px;
+
+  padding: 0 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-radius: 5px;
+
+  color: #514d47;
+  text-decoration: none;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    padding 0.18s ease;
+
+  &:hover {
+    padding-left: 15px;
+
+    background: #f5f4ef;
+    color: #345f5b;
+  }
+}
+
+.menuArrow {
+  color: #aaa59d;
+
+  font-size: 14px;
+
+  transition:
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.menuItem:hover .menuArrow {
+  color: #4e827d;
+
+  transform: translateX(2px);
+}
+
+
+// ==============================
+// 반응형
+// ==============================
+
+@media (max-width: 768px) {
+  .adminHeader {
+    height: 60px;
+  }
+
+  .inner {
+    padding: 0 20px;
+  }
+
+  .logo {
+    font-size: 20px;
+  }
+
+  .rightArea {
+    display: none;
+  }
+
+  .headerAction {
+    font-size: 12px;
+  }
+
+  .dropdownLayer {
+    width: 200px;
+  }
+}

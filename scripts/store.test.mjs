@@ -1,0 +1,38 @@
+import {test} from 'node:test'
+import assert from 'node:assert/strict'
+const memory=new Map([['jajak_admin_product_overrides','ORIGINAL_SENTINEL']])
+globalThis.localStorage={getItem:key=>memory.get(key)??null,setItem:(key,value)=>memory.set(key,value)}
+const store=await import('../src/demo/services/store.js')
+test('local data flows, persistence, subscription, rollback, empty state and reset',async()=>{
+ store.resetDemo()
+ const original=await store.getCollection('orders')
+ assert.equal(original.length,24)
+ assert.ok(original[0].createdAt.toDate() instanceof Date)
+ await store.updateDocument('orders',original[0].id,{status:'delivered'})
+ const reloaded=await import('../src/demo/services/store.js?reload=1')
+ assert.equal((await reloaded.getDocument('orders',original[0].id)).status,'delivered')
+ let count=-1;const stop=store.onSnapshot(store.collection(store.demoStore,'events'),s=>{count=s.size})
+ await new Promise(resolve=>queueMicrotask(resolve))
+ assert.equal(count,6)
+ const eventId=await store.addDocument('events',{title:'가상 추가 이벤트'})
+ await new Promise(resolve=>queueMicrotask(resolve));assert.equal(count,7)
+ await store.deleteDocument('events',eventId)
+ for(const e of await store.getCollection('events'))await store.deleteDocument('events',e.id)
+ await new Promise(resolve=>queueMicrotask(resolve));assert.equal(count,0)
+ const wishlist=await store.getDocs(store.query(store.collectionGroup(store.demoStore,'wishlist'),store.where('productId','==','demo_product_1')))
+ assert.equal(wishlist.size,2)
+ const key=await store.addDocument('notices',{title:'가상 공지'})
+ await store.updateDocument('notices',key,{status:'draft'})
+ assert.equal((await store.getDocument('notices',key)).status,'draft')
+ await store.deleteDocument('notices',key)
+ assert.equal(await store.getDocument('notices',key),null)
+ const before=await store.getDocument('orders',original[0].id)
+ const setItem=globalThis.localStorage.setItem;globalThis.localStorage.setItem=()=>{throw Error('quota')}
+ await assert.rejects(store.updateDocument('orders',original[0].id,{status:'cancelled'}))
+ assert.equal((await store.getDocument('orders',original[0].id)).status,before.status)
+ globalThis.localStorage.setItem=setItem
+ assert.equal(memory.get('jajak_admin_product_overrides'),'ORIGINAL_SENTINEL')
+ store.resetDemo();assert.equal((await store.getCollection('events')).length,6)
+ assert.equal((await store.getDocument('orders',original[0].id)).status,original[0].status)
+ stop()
+})

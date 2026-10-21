@@ -1,0 +1,628 @@
+.adminApp {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  height: auto;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #f8f7f3;
+
+  overflow: hidden;
+}
+
+
+// ========================================
+// Header 아래 전체 영역
+// ========================================
+
+.adminBody {
+  position: relative;
+
+  width: 100%;
+
+  flex: 1;
+  min-height: 0;
+
+  display: grid;
+
+  grid-template-columns:
+    230px
+    minmax(0, 1fr);
+
+  overflow: hidden;
+}
+
+
+// ========================================
+// Sidebar
+// ========================================
+
+.sidebar {
+  width: 230px;
+  height: 100%;
+
+  padding:
+    32px
+    18px
+    22px;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #588984;
+
+  border-radius:
+    0
+    34px
+    0
+    0;
+
+  overflow: hidden;
+}
+
+
+// ========================================
+// Navigation
+// ========================================
+
+.navigation {
+  position: relative;
+
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+
+.moveBox {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 46px;
+
+  z-index: 0;
+
+  border-radius: 9px;
+
+  background: #fff;
+
+  pointer-events: none;
+
+  box-shadow:
+    0 3px 12px
+    rgba(35, 79, 75, 0.08);
+}
+
+
+// ========================================
+// Sidebar Menu
+// ========================================
+
+.menuItem {
+  position: relative;
+
+  z-index: 1;
+
+  width: 100%;
+  height: 46px;
+
+  padding: 0 18px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+
+  border-radius: 9px;
+
+  color: rgba(255, 255, 255, 0.9);
+
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+
+  transition:
+    color 0.2s ease;
+
+  &:hover:not(.active) {
+    color: #fff;
+  }
+}
+
+
+.menuIcon {
+  width: 18px;
+  height: 18px;
+
+  flex-shrink: 0;
+
+  transition:
+    color 0.2s ease;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+}
+
+
+.mobileMenuButton,
+.mobileCloseButton,
+.mobileBackdrop,
+.mobileUtilityArea {
+  display: none;
+}
+
+
+.menuLabel {
+  white-space: nowrap;
+}
+
+
+.active {
+  color: #386b67;
+
+  font-weight: 600;
+
+  &:hover {
+    color: #386b67;
+  }
+
+  .menuIcon {
+    color: #4d7e7b;
+  }
+}
+
+
+// ========================================
+// 관리자 계정
+// ========================================
+
+.accountArea {
+  width: 100%;
+
+  margin-top: auto;
+}
+
+
+.accountBadge {
+  width: 100%;
+  height: 40px;
+
+  padding: 0 14px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  border-radius: 21px;
+
+  background:
+    rgba(255, 255, 255, 0.96);
+}
+
+
+.accountAvatar {
+  width: 15px;
+  height: 15px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #dfe2de;
+}
+
+
+.accountEmail {
+  min-width: 0;
+
+  overflow: hidden;
+
+  color: #626761;
+
+  font-size: 12px;
+  font-weight: 500;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+// ========================================
+// 페이지 변경 영역
+// ========================================
+
+.content {
+  min-width: 0;
+  min-height: 0;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  background: #f8f7f3;
+}
+
+
+// ========================================
+// 실제 페이지가 들어가는 공통 영역
+// ========================================
+
+.contentViewport {
+  width: calc(100% - 200px);
+
+  max-width: 1380px;
+
+  // 항상 오른쪽 관리자 영역 기준 중앙 정렬
+  margin: 0 auto;
+
+  padding:
+    52px
+    0
+    72px;
+}
+
+
+// ========================================
+// Scrollbar
+// ========================================
+
+.content {
+  scrollbar-width: thin;
+
+  scrollbar-color:
+    rgba(90, 130, 125, 0.22)
+    transparent;
+
+  &::-webkit-scrollbar {
+    width: 7px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+
+    background:
+      rgba(90, 130, 125, 0.22);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background:
+      rgba(90, 130, 125, 0.38);
+  }
+}
+
+
+// ========================================
+// Desktop
+// ========================================
+
+@media (max-width: 1500px) {
+
+  .adminBody {
+    grid-template-columns:
+      210px
+      minmax(0, 1fr);
+  }
+
+  .sidebar {
+    width: 210px;
+
+    padding:
+      30px
+      16px
+      22px;
+  }
+
+  .menuItem {
+    padding: 0 16px;
+
+    font-size: 13px;
+  }
+
+  .contentViewport {
+    width: calc(100% - 72px);
+
+    max-width: 1280px;
+
+    // 기존 margin: 0 40px 제거
+    margin: 0 auto;
+
+    padding:
+      36px
+      0
+      60px;
+  }
+}
+
+
+// ========================================
+// Tablet
+// ========================================
+
+@media (max-width: 1100px) {
+
+  .adminBody {
+    grid-template-columns:
+      175px
+      minmax(0, 1fr);
+  }
+
+  .sidebar {
+    width: 175px;
+
+    padding:
+      28px
+      15px
+      20px;
+  }
+
+  .menuItem {
+    padding: 0 14px;
+
+    font-size: 12px;
+  }
+
+  .contentViewport {
+    width: calc(100% - 48px);
+
+    max-width: none;
+
+    margin: 0 auto;
+
+    padding:
+      30px
+      0
+      50px;
+  }
+}
+
+
+// ========================================
+// Mobile
+// ========================================
+
+@media (max-width: 768px) {
+
+  .adminBody {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sidebar {
+    position: fixed;
+    inset: 0 0 0 auto;
+    z-index: 120;
+
+    width: min(280px, calc(100vw - 56px));
+    height: 100dvh;
+    min-height: 0;
+
+    padding:
+      64px
+      18px
+      20px;
+
+    border-radius:
+      20px
+      0
+      0
+      20px;
+
+    box-sizing: border-box;
+    visibility: hidden;
+    transform: translateX(105%);
+    transition:
+      transform 0.28s ease,
+      visibility 0.28s ease;
+    pointer-events: none;
+    box-shadow: -12px 0 30px rgba(28, 56, 53, 0.18);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .sidebarOpen {
+    visibility: visible;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  .mobileMenuButton {
+    position: absolute;
+    top: 9px;
+    right: 16px;
+    z-index: 110;
+
+    width: 42px;
+    height: 42px;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    border: 1px solid rgba(77, 126, 123, 0.24);
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 4px 14px rgba(35, 79, 75, 0.1);
+    cursor: pointer;
+
+    span {
+      width: 19px;
+      height: 2px;
+      border-radius: 2px;
+      background: #3b6f6b;
+    }
+  }
+
+  .mobileBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 115;
+
+    width: 100%;
+    height: 100%;
+    padding: 0;
+
+    display: block;
+
+    border: 0;
+    background: rgba(25, 35, 33, 0.32);
+    cursor: pointer;
+  }
+
+  .mobileCloseButton {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+
+    width: 36px;
+    height: 36px;
+    padding: 0;
+
+    display: block;
+
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    cursor: pointer;
+
+    span {
+      position: absolute;
+      top: 17px;
+      left: 9px;
+      width: 16px;
+      height: 2px;
+      border-radius: 2px;
+      background: #fff;
+
+      &:first-child {
+        transform: rotate(45deg);
+      }
+
+      &:last-child {
+        transform: rotate(-45deg);
+      }
+    }
+  }
+
+  .mobileUtilityArea {
+    display: grid;
+    gap: 10px;
+    margin-top: 20px;
+    margin-bottom: 18px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.24);
+  }
+
+  .mobileUtilityTitle {
+    padding: 0 10px;
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .06em;
+  }
+
+  .mobileSiteLinks {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .mobileSiteLinks a {
+    min-height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 12px;
+    text-decoration: none;
+  }
+
+  .mobileLogoutButton {
+    position: static;
+    width: 100%;
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px; margin-top: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .mobileLogoutButton svg {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentcolor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+  }
+
+  .menuItem {
+    padding: 0 18px;
+
+    justify-content: flex-start;
+  }
+
+  .accountArea {
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  .menuLabel {
+    display: inline;
+  }
+
+  .accountBadge {
+    padding: 0 14px;
+
+    justify-content: flex-start;
+  }
+
+  .accountEmail {
+    display: block;
+  }
+
+  .contentViewport {
+    width: calc(100% - 32px);
+
+    max-width: none;
+
+    margin: 0 auto;
+
+    padding:
+      20px
+      0
+      40px;
+  }
+}
