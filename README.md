@@ -19,6 +19,8 @@
 
 데스크톱과 모바일에 맞춘 관리자 메뉴를 제공하며, 상단의 **데모 데이터 초기화** 버튼으로 언제든 초기 상태로 되돌릴 수 있습니다.
 
+상단 데모 안내는 X 버튼으로 닫을 수 있습니다. 화면을 이동해도 닫힌 상태를 유지하며, 새로고침하면 초기화 버튼과 함께 다시 표시됩니다.
+
 ## 기술 스택
 
 - React 19, JavaScript / JSX
@@ -44,6 +46,14 @@ npm run dev
 터미널에 표시되는 로컬 주소로 접속하면 `/admin` 대시보드가 열립니다. 이미 설치한 폴더에서는 `npm run dev`만 실행하면 됩니다.
 
 PowerShell에서 npm 실행이 제한되면 `npm` 대신 `npm.cmd`를 사용하세요.
+
+## Vercel에서 직접 접속과 404 처리
+
+루트의 `vercel.json`은 `/admin`과 `/admin/products` 같은 경로 요청을 `index.html`로 전달합니다. [Vercel의 Vite SPA 설정](https://vercel.com/docs/frameworks/frontend/vite#using-vite-to-make-spas)에 따라, 직접 접속과 새로고침에서도 React Router가 해당 화면을 표시합니다. 이 설정은 Vercel에 새로 배포한 뒤 적용됩니다.
+
+기본 주소 `/`만 `/admin`으로 이동하며, 없는 주소는 별도 404 안내 화면을 표시합니다. 안내 화면에서 관리자 홈으로 이동하거나 이전 화면으로 돌아갈 수 있습니다. SPA 내부의 404 안내이므로 HTTP 응답 상태와는 구분합니다.
+
+빌드 후 `npm run preview -- --port 4175 --strictPort`를 실행한 상태에서, 다른 터미널의 `node scripts/routing-check.mjs`로 로컬 직접 접속·새로고침·404 복귀 동작을 검사할 수 있습니다. 실제 Vercel 라우팅 반영 여부는 배포 후 별도로 확인해야 합니다.
 
 ## 데이터와 초기화
 
